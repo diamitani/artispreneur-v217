@@ -325,27 +325,39 @@ ${spotify ? `# Spotify: ${spotify.followers.toLocaleString()} followers · ${spo
 }
 
 function finishOnboarding() {
-  // Hide steps
-  document.querySelectorAll('.step,.progress,.wizard-header').forEach(s => s.style.display = 'none');
+  // Save all data to localStorage
+  const profile = {
+    first_name: getVal('firstName'), last_name: getVal('lastName'),
+    stage_name: getVal('artistName') || getVal('firstName'),
+    hometown: getVal('hometown'), current_city: getVal('currentCity'),
+    years: getVal('yearsMusic'), genre: getVal('genre'),
+    why_music: getVal('whyMusic'), influences: getVal('influences'),
+    story: getVal('story'), message: getVal('message'),
+    employment: getVal('employment'), budget: getVal('budget'), living: getVal('living'),
+    gear: getVal('gear'), show_count: getVal('showCount'),
+    experience: getSelected('experienceChips'), goals: getSelected('goalChips'),
+    press: getVal('press'),
+    links: scrapeLinks(),
+    bio: generateBio(),
+    soul: generateSoul(),
+    created_at: new Date().toISOString(),
+  };
+  localStorage.setItem('artispreneur_profile', JSON.stringify(profile));
+  localStorage.setItem('artispreneur_logged_in', 'true');
   
-  // Build summary
-  const links = scrapeLinks();
-  const spotify = links['spotify'];
-  const goals = getSelected('goalChips');
+  // Hide steps, show summary
+  document.querySelectorAll('.step,.progress,.wizard-header').forEach(s => s.style.display = 'none');
+  const goals = profile.goals;
+  const spotify = profile.links['spotify'];
   
   document.getElementById('summaryStats').innerHTML = `
-    <div class="stat-box"><div class="val">${Object.keys(links).length}</div><div class="lbl">Links Scraped</div></div>
+    <div class="stat-box"><div class="val">${Object.keys(profile.links).length}</div><div class="lbl">Links Scraped</div></div>
     <div class="stat-box"><div class="val">${goals.length}</div><div class="lbl">Goals</div></div>
-    <div class="stat-box"><div class="val">${spotify ? spotify.monthlyListeners.toLocaleString() : '—'}</div><div class="lbl">Listeners</div></div>
+    <div class="stat-box"><div class="val">${spotify ? (spotify.monthlyListeners||0).toLocaleString() : '—'}</div><div class="lbl">Listeners</div></div>
   `;
-  document.getElementById('soulOutput').textContent = generateSoul();
-  document.getElementById('bioOutput').innerHTML = '<h3>Your PAL-Generated Bio</h3>' + generateBio().replace(/\n\n/g, '<br><br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  
+  document.getElementById('soulOutput').textContent = profile.soul;
+  document.getElementById('bioOutput').innerHTML = '<h3>Your PAL-Generated Bio</h3>' + profile.bio.replace(/\n\n/g, '<br><br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   document.getElementById('summary').style.display = 'block';
-  
-  // Simulate S3 provisioning
-  console.log('S3 bucket provisioned:', 's3://artispreneur-outputs/users/' + (getVal('artistName')||'artist').toLowerCase().replace(/\s+/g,'-') + '/');
-  console.log('Knowledge base saved. Links scraped:', Object.keys(links).length);
 }
 </script>
 </body>

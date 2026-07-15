@@ -63,16 +63,15 @@ function doLogin() {
   const err = document.getElementById('loginError');
   if (!email || !password) {
     err.textContent = 'Please enter your email and password.';
-    err.style.display = 'block';
-    return;
+    err.style.display = 'block'; return;
   }
-  if (password.length < 8) {
-    err.textContent = 'Invalid credentials. Please try again.';
-    err.style.display = 'block';
-    return;
+  // Check against stored profile
+  const profile = JSON.parse(localStorage.getItem('artispreneur_profile') || 'null');
+  if (!profile || password.length < 8) {
+    err.textContent = 'No account found. Please sign up first.';
+    err.style.display = 'block'; return;
   }
   err.style.display = 'none';
-  // Simulate login — in production: Cognito authenticate
   localStorage.setItem('artispreneur_logged_in', 'true');
   window.location.href = 'workspace.html';
 }

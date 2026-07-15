@@ -184,8 +184,8 @@ input,textarea,button{font-family:'Inter',sans-serif}
         </div>
       </div>
       <div class="sidebar-user">
-        <div class="agent-avatar pro" style="width:26px;height:26px;border-radius:7px">M</div>
-        <div><div style="font-size:12px;font-weight:600">Midnight</div><div style="font-size:10px;color:var(--text-dim)">Free Plan · 62% used</div></div>
+        <div class="agent-avatar pro" style="width:26px;height:26px;border-radius:7px" id="sidebarAvatar">?</div>
+        <div><div style="font-size:12px;font-weight:600" id="sidebarName">You</div><div style="font-size:10px;color:var(--text-dim)" id="sidebarPlan">Free Plan · 0% used</div></div>
       </div>
     </div>
   </aside>
@@ -565,6 +565,18 @@ function toggleContext() { document.getElementById('app').classList.toggle('cont
 document.addEventListener('keydown', e => {
   if (e.key === 'k' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); openCmd(); }
 });
+
+// Load user profile
+(function initProfile() {
+  const p = JSON.parse(localStorage.getItem('artispreneur_profile') || 'null');
+  if (!p) return;
+  const name = p.stage_name || p.first_name || 'Artist';
+  document.getElementById('sidebarAvatar').textContent = name[0];
+  document.getElementById('sidebarName').textContent = name;
+  document.getElementById('sidebarPlan').textContent = 'Free Plan · New workspace';
+  // Update chat empty state
+  document.getElementById('chatEmpty').innerHTML = `<h2>Welcome, ${name}</h2><p>I'm your Manager Agent. Let's get your music business moving.</p><div class="suggestions">` + document.getElementById('chatEmpty').querySelector('.suggestions')?.innerHTML + '</div>';
+})();
 </script>
 </body>
 </html>
