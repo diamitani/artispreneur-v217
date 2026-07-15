@@ -278,6 +278,7 @@ function scrapeLinks() {
 
 function generateBio() {
   const name = getVal('artistName') || getVal('firstName') || 'The Artist';
+  const first = name.split(' ')[0];
   const genre = getVal('genre');
   const hometown = getVal('hometown');
   const city = getVal('currentCity');
@@ -287,16 +288,62 @@ function generateBio() {
   const message = getVal('message');
   const years = getVal('yearsMusic');
   const experience = getSelected('experienceChips');
-  const press = getVal('press');
+  const goals = getSelected('goalChips');
   const links = scrapeLinks();
-  const spotify = links['spotify'];
-  const ig = links['instagram'];
-
-  // PAL-generated bio
-  const expStr = experience.length ? experience.join(', ').toLowerCase() : 'emerging';
-  const influenceStr = influences ? `drawing inspiration from ${influences.split(',')[0] || influences.split('\n')[0]}` : '';
+  const parts = [];
   
-  return `**${name}** is an ${genre.toLowerCase()} artist ${hometown ? 'from '+hometown : ''}${city && city !== hometown ? ', now based in '+city : ''}. ${years ? 'With '+years.toLowerCase()+' of dedication to their craft' : 'A rising voice in music'}, ${name} creates music that ${message ? message.toLowerCase() : 'speaks to the soul'}.\n\n${story || why}\n\n${influenceStr ? 'Their sound is shaped by '+influences.split(/[,\n]/).slice(0,3).join(', ')+'. ' : ''}${name} brings ${expStr} energy to every performance.\n\n${spotify ? 'Stream their music on Spotify ('+spotify.followers.toLocaleString()+' followers, '+spotify.monthlyListeners.toLocaleString()+' monthly listeners). ' : ''}${ig ? 'Follow their journey on Instagram.' : ''}`;
+  // Headline hook — genre-specific
+  const hooks = {
+    'Hip-Hop/Rap': `${first} doesn't just make music — ${first} builds worlds.`,
+    'R&B/Soul': `${name}'s voice doesn't ask for attention. It commands it.`,
+    'Pop': `${name} writes the kind of songs that get stuck in your head — and your heart.`,
+    'Electronic': `${name} creates soundscapes that pull you into another dimension.`,
+    'Rock': `${name} plugs in and the room changes.`,
+    'Indie/Alternative': `${name} makes music for people who feel everything deeply.`,
+    'Jazz': `${name} lets the silence speak as loud as the notes.`,
+    'Latin': `${name} turns rhythm into a language everyone understands.`,
+    'Afrobeats': `${name} makes music that moves bodies and souls at once.`,
+    'Country': `${name} tells stories that feel like they were written just for you.`,
+    'Other': `${name} makes the kind of music that can't be put in a box.`,
+  };
+  parts.push(hooks[genre] || hooks['Other'].replace('{name}',name).replace('{first}',first));
+  
+  // Identity
+  let identity = `${first} is ${genre ? 'a ' + genre.toLowerCase() + ' artist' : 'an artist'}`;
+  if (hometown && city && hometown !== city) identity += ` from ${hometown}, now based in ${city}`;
+  else if (hometown) identity += ` from ${hometown}`;
+  else if (city) identity += ` based in ${city}`;
+  identity += '.';
+  parts.push(identity);
+  
+  // Story — use their words
+  if (story && story.length > 20) parts.push(story.replace(/\n/g, ' ').trim());
+  else if (why && why.length > 20) parts.push(why.replace(/\n/g, ' ').trim());
+  
+  // Influences paragraph
+  if (influences) {
+    const il = influences.split(/[,\n]/).map(s=>s.trim()).filter(s=>s.length>1).slice(0,5);
+    if (il.length) {
+      const ilStr = il.length>2 ? il.slice(0,-1).join(', ')+', and '+il[il.length-1] : il.join(' and ');
+      const verbs = ['drawing from','shaped by','moving between','channeling','blending'];
+      parts.push(`${first}'s sound is ${verbs[il.length%verbs.length]} ${ilStr}${message ? ' — music that '+message.toLowerCase()+'.' : '.'}`);
+    }
+  }
+  
+  // Experience
+  if (experience&&experience.length) parts.push(`${first} has ${experience.map(e=>e.toLowerCase()).join(', ')}${years?' over '+years.toLowerCase()+' of making music':''}.`);
+  else if (years) parts.push(`With ${years.toLowerCase()} in music, ${first} brings depth to every project.`);
+  
+  // Goals
+  if (goals&&goals.length) {
+    const g = goals.slice(0,3).map(g=>g.charAt(0).toLowerCase()+g.slice(1));
+    parts.push(`Right now, ${first} is focused on ${g.join(', ')}.`);
+  }
+  
+  // CTA
+  if (links['spotify']) parts.push(`Stream ${name} on Spotify${links['instagram']?' and follow on Instagram':''}.`);
+  
+  return parts.join('\n\n');
 }
 
 function generateSoul() {
