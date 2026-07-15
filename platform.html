@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artispreneur — You make the music. We handle the rest.</title>
+<meta name="description" content="Artispreneur helps independent musicians get paid, get heard, and get organized — without a label.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--black:#09090b;--surface:#18181b;--card:#1c1c1f;--border:#27272a;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#71717a;--gold:#c9a227;--gold-light:#e8c84a;--gold-muted:rgba(201,162,39,0.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--black);color:var(--text);line-height:1.6}
+a{color:var(--gold);text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 24px;background:rgba(9,9,11,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.navbar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-brand{display:flex;align-items:center;gap:8px}
+.nav-brand span{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;letter-spacing:-.5px}
+.nav-brand .gold{color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;transition:all .15s;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-gold{background:var(--gold);color:var(--black)}.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);font-size:13px}.btn-outline:hover{border-color:var(--gold)}
+
+.hero{min-height:90vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 30%,var(--gold-muted),transparent 70%)}
+.hero-inner{position:relative;z-index:1;max-width:650px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:12px;color:var(--text-muted);margin-bottom:24px}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,54px);font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:16px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero p{font-size:17px;color:var(--text-muted);max-width:480px;margin:0 auto 28px;line-height:1.6}
+
+.hero-chat{max-width:500px;margin:40px auto 0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;text-align:left}
+.hero-chat-header{padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600}
+.hero-chat-body{padding:16px;max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.chat-msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.4}
+.chat-msg.agent{background:var(--card);color:var(--text-muted);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:var(--gold-muted);color:var(--gold);align-self:flex-end;border-bottom-right-radius:4px}
+.hero-chat-input{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--border)}
+.hero-chat-input input{flex:1;padding:10px;background:var(--black);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif}
+.hero-chat-input input:focus{outline:none;border-color:var(--gold)}
+.hero-chat-input button{background:var(--gold);color:var(--black);border:none;padding:10px 16px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif}
+
+section{padding:80px 0}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:8px;text-align:center}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,38px);font-weight:800;text-align:center;margin-bottom:12px}
+.section-sub{text-align:center;font-size:15px;color:var(--text-muted);max-width:520px;margin:0 auto 48px;line-height:1.6}
+
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pain-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;transition:all .2s}
+.pain-card:hover{border-color:var(--border-light)}
+.pain-card .emoji{font-size:32px;margin-bottom:12px}
+.pain-card h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.pain-card p{font-size:13px;color:var(--text-muted);line-height:1.5}
+
+.solve-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.solve-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;transition:all .2s}
+.solve-card:hover{border-color:var(--gold)}
+.solve-card h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.solve-card p{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:10px}
+.solve-card .tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:100px;background:var(--gold-muted);color:var(--gold)}
+
+.stages-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stage-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .15s}
+.stage-card:hover,.stage-card.picked{border-color:var(--gold);background:var(--gold-muted)}
+.stage-card .num{font-size:28px;font-weight:900;color:var(--gold);margin-bottom:6px}
+.stage-card h4{font-size:14px;font-weight:700;margin-bottom:4px}
+.stage-card p{font-size:11px;color:var(--text-dim)}
+
+.stage-result{display:none;background:var(--surface);border:1px solid var(--gold);border-radius:14px;padding:32px;text-align:center;margin-top:28px}
+.stage-result h3{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--gold)}
+.stage-result p{font-size:14px;color:var(--text-muted);max-width:500px;margin:0 auto 18px}
+.stage-result .path{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+.cta-section{text-align:center;padding:100px 0}
+.cta-section h2{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,40px);font-weight:900;margin-bottom:12px}
+.cta-section h2 span{color:var(--gold)}
+.cta-section p{font-size:16px;color:var(--text-muted);margin-bottom:28px}
+
+footer{background:var(--card);border-top:1px solid var(--border);padding:40px 0 32px;text-align:center}
+footer .links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:16px}
+footer .links a{font-size:13px;color:var(--text-muted)}
+footer .links a:hover{color:var(--text)}
+footer p{font-size:12px;color:var(--text-dim)}
+
+@media(max-width:768px){.pain-grid,.solve-grid,.stages-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.pain-grid,.solve-grid,.stages-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="nav-brand">
+      <img src="logo.png" alt="A" style="height:20px">
+      <span>Artis<span class="gold">preneur</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="https://artispreneur-landing.vercel.app/workspace.html">Workspace</a>
+      <a href="academy.html">Academy</a>
+      <a href="directory.html">Directory</a>
+      <a href="login.html">Login</a>
+      <a href="signup.html" class="btn btn-gold" style="font-size:13px;padding:8px 18px">Get Started Free</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="dot"></span> For independent musicians</div>
+    <h1>You make the <em>music.</em><br>We handle the <em>rest.</em></h1>
+    <p>Artispreneur takes care of the boring business stuff — royalties, playlists, contracts, taxes — so you can focus on what matters.</p>
+    <a href="signup.html" class="btn btn-gold" style="font-size:15px;padding:14px 30px">Start for free →</a>
+
+    <div class="hero-chat">
+      <div class="hero-chat-header">💬 Ask anything about your music career</div>
+      <div class="hero-chat-body" id="chatBody">
+        <div class="chat-msg agent">Hey! 👋 I help musicians get their business together.<br><br>Tell me where you're at — I'll show you exactly what to do next.</div>
+      </div>
+      <div class="hero-chat-input">
+        <input type="text" id="chatInput" placeholder='e.g. "I just uploaded my first song, now what?"' onkeydown="if(event.key==='Enter')sendChat()">
+        <button onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="section-label">Sound Familiar?</div>
+    <h2 class="section-title">You're not alone.</h2>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="emoji">😰</div>
+        <h3>"I don't know what a PRO is"</h3>
+        <p>Most artists don't. That's why we explain everything in plain English — and our agents handle it for you.</p>
+      </div>
+      <div class="pain-card">
+        <div class="emoji">😤</div>
+        <h3>"I just want my music on playlists"</h3>
+        <p>You shouldn't have to figure out the submission process alone. Our Distribution Agent does it automatically.</p>
+      </div>
+      <div class="pain-card">
+        <div class="emoji">😩</div>
+        <h3>"Taxes? Contracts? LLCs??"</h3>
+        <p>Nobody teaches artists this stuff. We built agents that handle the legal and financial side so you don't have to learn it the hard way.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-label">What We Do</div>
+    <h2 class="section-title">We handle the boring stuff.</h2>
+    <p class="section-sub">All the things a label would do — without giving up your rights or your money.</p>
+    <div class="solve-grid">
+      <div class="solve-card">
+        <h3>🎵 Get your royalties</h3>
+        <p>We register your music with BMI, ASCAP, or SESAC so you actually get paid when your songs are played.</p>
+        <span class="tag">PRO Agent</span>
+      </div>
+      <div class="solve-card">
+        <h3>📀 Get on playlists</h3>
+        <p>We find the right playlists for your sound and submit your music. You get streams while you sleep.</p>
+        <span class="tag">Distribution Agent</span>
+      </div>
+      <div class="solve-card">
+        <h3>🎬 License your music</h3>
+        <p>TV shows, films, and commercials need music. We find the opportunities and pitch your songs.</p>
+        <span class="tag">Licensing Agent</span>
+      </div>
+      <div class="solve-card">
+        <h3>⚖️ Set up your business</h3>
+        <p>LLC formation, EIN registration, contracts, splitsheets — all handled. No lawyer required.</p>
+        <span class="tag">Legal Agent</span>
+      </div>
+      <div class="solve-card">
+        <h3>💰 Handle your money</h3>
+        <p>Business banking, expense tracking, tax estimates. We make it simple so you don't get hit with surprises.</p>
+        <span class="tag">Finance Agent</span>
+      </div>
+      <div class="solve-card">
+        <h3>📋 Stay organized</h3>
+        <p>Business plans, release calendars, contact lists — your Manager Agent keeps everything in one place.</p>
+        <span class="tag">Manager Agent</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="section-label">Where Are You At?</div>
+    <h2 class="section-title">Pick your stage. We'll show you the path.</h2>
+    <div class="stages-grid">
+      <div class="stage-card" onclick="showPath(0,this)">
+        <div class="num">🎤</div>
+        <h4>Just Starting</h4>
+        <p>I've made some music but haven't released anything yet</p>
+      </div>
+      <div class="stage-card" onclick="showPath(1,this)">
+        <div class="num">📀</div>
+        <h4>First Releases</h4>
+        <p>I've put out a few songs and want to grow my audience</p>
+      </div>
+      <div class="stage-card" onclick="showPath(2,this)">
+        <div class="num">📈</div>
+        <h4>Building Momentum</h4>
+        <p>I'm releasing regularly and want to professionalize</p>
+      </div>
+      <div class="stage-card" onclick="showPath(3,this)">
+        <div class="num">🏢</div>
+        <h4>Running a Business</h4>
+        <p>Music is my career. I need systems to manage it all</p>
+      </div>
+    </div>
+    <div class="stage-result" id="stageResult">
+      <h3 id="stageTitle"></h3>
+      <p id="stageDesc"></p>
+      <div class="path" id="stagePath"></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Ready to <span>stop guessing</span>?</h2>
+  <p>Thousands of independent artists are already managing their careers with Artispreneur. Join them.</p>
+  <a href="signup.html" class="btn btn-gold" style="font-size:16px;padding:16px 36px">Start for free →</a>
+</section>
+
+<footer>
+  <div class="links">
+    <a href="https://artispreneur-landing.vercel.app/workspace.html">Workspace</a>
+    <a href="https://academy-build.vercel.app">Academy</a>
+    <a href="https://directory-build.vercel.app">Directory</a>
+    <a href="https://artispreneur-landing.vercel.app/pricing.html">Pricing</a>
+  </div>
+  <p>© 2026 Artispreneur · Art Means Business · Chicago, IL</p>
+</footer>
+
+<script>
+const paths = [
+  {
+    title: "Let's get you set up. Step by step.",
+    desc: "First things first — we'll help you register with a PRO (that's how you get paid when your music is played anywhere), set up your artist profiles on streaming platforms, and build your brand from the ground up.",
+    steps: ["1. Register with a PRO (we do it for you)","2. Set up your artist profiles","3. Learn to brand yourself →"]
+  },
+  {
+    title: "Time to grow your audience.",
+    desc: "Now that you've got music out, we'll get you on playlists, submit your songs to blogs and radio, and help you build a promotion strategy that actually works.",
+    steps: ["1. Get on Spotify/Apple Music playlists","2. Submit to music blogs & press","3. Build your social media presence →"]
+  },
+  {
+    title: "Let's make this a real business.",
+    desc: "You're making money from your music — now let's protect it. We'll set up your LLC, register your copyrights, file your taxes, and build systems so everything runs smoothly.",
+    steps: ["1. Form your LLC & get your EIN","2. Copyright your catalog","3. Set up business banking →"]
+  },
+  {
+    title: "Scale what's working. Automate the rest.",
+    desc: "You're running a real business. Our agents work 24/7 — managing royalties across your catalog, finding licensing deals, handling contracts, and giving you financial insights.",
+    steps: ["1. License your catalog for TV/film","2. Automate tax & finance tracking","3. Build custom agent workflows →"]
+  }
+];
+
+function showPath(idx, el) {
+  document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('picked'));
+  el.classList.add('picked');
+  const p = paths[idx];
+  document.getElementById('stageResult').style.display = 'block';
+  document.getElementById('stageTitle').textContent = p.title;
+  document.getElementById('stageDesc').textContent = p.desc;
+  document.getElementById('stagePath').innerHTML = p.steps.map(s => '<a href="signup.html" class="btn btn-outline">'+s+'</a>').join('');
+  document.getElementById('stageResult').scrollIntoView({behavior:'smooth'});
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const body = document.getElementById('chatBody');
+  const msg = input.value.trim();
+  if (!msg) return;
+  body.innerHTML += '<div class="chat-msg user">'+msg+'</div>';
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+  const low = msg.toLowerCase();
+  let resp = "Great question! Most artists don't know this stuff, and that's totally normal. When you sign up, our agents walk you through everything step by step. Want to <a href='signup.html' style='color:var(--gold)'>get started</a>?";
+  if (low.includes('pro')||low.includes('royal')) resp = "A PRO (Performing Rights Organization) collects money for you whenever your music is played — radio, venues, streaming. Our PRO Agent sets this up in about 5 minutes. <a href='signup.html' style='color:var(--gold)'>Get registered →</a>";
+  if (low.includes('playlist')||low.includes('spotify')) resp = "Getting on playlists is one of the best ways to grow. Our Distribution Agent finds playlists that match your sound and submits your music automatically. <a href='signup.html' style='color:var(--gold)'>Get started →</a>";
+  if (low.includes('llc')||low.includes('business')||low.includes('tax')) resp = "Setting up your business properly protects your money and your music. Our Legal Agent handles LLC formation, EIN registration, and contracts. No lawyer needed. <a href='signup.html' style='color:var(--gold)'>Get set up →</a>";
+  setTimeout(() => {
+    body.innerHTML += '<div class="chat-msg agent">'+resp+'</div>';
+    body.scrollTop = body.scrollHeight;
+  }, 800);
+}
+</script>
+</body>
+</html>

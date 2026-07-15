@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — Artispreneur</title>
+<meta name="description" content="Create your Artispreneur workspace. Tell us about your music and your AI agents will be ready.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#09090b;--surface:#18181b;--card:#1c1c1f;--border:#27272a;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#71717a;--gold:#c9a227;--green:#22c55e}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--black);color:var(--text);line-height:1.6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+a{color:var(--gold);text-decoration:none}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:40px;max-width:520px;width:100%}
+.card-header{text-align:center;margin-bottom:32px}
+.card-header img{height:24px;margin-bottom:16px}
+.card-header h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;margin-bottom:4px}
+.card-header p{font-size:13px;color:var(--text-muted)}
+.steps{display:flex;justify-content:center;gap:0;margin-bottom:28px}
+.step-dot{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim)}
+.step-dot .n{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;background:var(--card);border:1px solid var(--border)}
+.step-dot.active .n{background:rgba(201,162,39,.12);border-color:var(--gold);color:var(--gold)}
+.step-dot.done .n{background:var(--green);border-color:var(--green);color:var(--black)}
+.step-line{width:24px;height:1px;background:var(--border);margin:0 6px;align-self:center}
+.form-step{display:none}.form-step.active{display:block}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--text-muted)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;background:var(--black);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--gold)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-group small{display:block;font-size:11px;color:var(--text-dim);margin-top:4px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border-radius:8px;font-weight:700;font-size:14px;transition:all .15s;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-gold{background:var(--gold);color:var(--black)}.btn-gold:hover{background:#e8c84a}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--gold)}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;background:var(--black);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px;font-family:'Inter',sans-serif}
+.google-btn:hover{background:var(--card)}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--text-dim);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.soul-preview{background:var(--black);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-dim);white-space:pre-wrap;max-height:160px;overflow-y:auto;margin-top:8px}
+.success{display:none;text-align:center}
+.success h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:8px;color:var(--gold)}
+.success p{font-size:14px;color:var(--text-muted);margin-bottom:20px}
+.success .btn{display:inline-flex;width:auto;padding:14px 32px}
+.back-link{text-align:center;margin-top:20px;font-size:13px;color:var(--text-dim)}
+.back-link a{color:var(--text-dim)}.back-link a:hover{color:var(--gold)}
+@media(max-width:500px){.card{padding:24px}.form-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <a href="index.html"><img src="logo.png" alt="Artispreneur"></a>
+    <h1>Create Your Workspace</h1>
+    <p>Free forever. No credit card. Takes 2 minutes.</p>
+  </div>
+  <div class="steps">
+    <div class="step-dot active" id="dot1"><span class="n">1</span>Account</div>
+    <div class="step-line"></div>
+    <div class="step-dot" id="dot2"><span class="n">2</span>Artist</div>
+    <div class="step-line"></div>
+    <div class="step-dot" id="dot3"><span class="n">3</span>Goals</div>
+  </div>
+  <div class="form-step active" id="step1">
+    <button class="google-btn" onclick="alert('Google OAuth via Supabase — coming soon')">G &nbsp;Continue with Google</button>
+    <div class="divider">or use email</div>
+    <div class="form-group"><label>Username</label><input type="text" id="username" placeholder="yourhandle"><small>This will be your workspace URL</small></div>
+    <div class="form-row">
+      <div class="form-group"><label>First Name</label><input type="text" id="firstName" placeholder="Your name"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" id="lastName"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="you@email.com"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="password" placeholder="At least 8 characters"></div>
+    <button class="btn btn-gold" onclick="goStep(2)">Continue →</button>
+  </div>
+  <div class="form-step" id="step2">
+    <div class="form-group"><label>Artist / Stage Name</label><input type="text" id="artistName" placeholder="What the world knows you as"><small>This can be your real name too</small></div>
+    <div class="form-row">
+      <div class="form-group"><label>Artist Type</label><select id="artistType"><option>Solo Artist</option><option>Producer</option><option>Band / Group</option><option>Songwriter</option><option>DJ</option><option>Beatmaker</option><option>Composer</option><option>Other</option></select></div>
+      <div class="form-group"><label>Primary Genre</label><select id="genre"><option>Hip-Hop / Rap</option><option>R&B / Soul</option><option>Pop</option><option>Electronic</option><option>Rock</option><option>Indie / Alternative</option><option>Jazz</option><option>Classical</option><option>Country</option><option>Latin</option><option>Afrobeats</option><option>Other</option></select></div>
+    </div>
+    <div class="form-group"><label>Where are you in your career?</label><select id="stage"><option>Just starting — making music, no releases yet</option><option>First releases out — figuring out promotion</option><option>Building momentum — releasing regularly</option><option>Established — managing a catalog and business</option></select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Registered with a PRO?</label><select id="pro"><option>No — what's a PRO?</option><option>Not yet — I need help</option><option>BMI</option><option>ASCAP</option><option>SESAC</option></select></div>
+      <div class="form-group"><label>Have an LLC or business?</label><select id="hasLLC"><option>No</option><option>Not yet — want to set one up</option><option>Yes</option></select></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-gold" onclick="goStep(3)">Continue →</button>
+    </div>
+  </div>
+  <div class="form-step" id="step3">
+    <div class="form-group"><label>What do you want help with? (pick up to 3)</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox" checked> Register with a PRO</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox" checked> Get on playlists</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> License my music</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> Set up an LLC</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> Copyright my music</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> Handle taxes</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> Build my brand</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> Find industry contacts</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> Learn the business</label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);padding:4px 0"><input type="checkbox"> All of the above</label>
+      </div></div>
+    <div class="form-group"><label>Anything else we should know?</label><textarea id="notes" placeholder="Tell us about your music, your goals, what you're struggling with..."></textarea></div>
+    <div class="form-group"><label>Your agent's soul.md (auto-generated)</label><div class="soul-preview" id="soulPreview"># Fill in your details above to see your soul.md...</div></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="goStep(2)">← Back</button>
+      <button class="btn btn-gold" onclick="submitSignup()">Create My Workspace →</button>
+    </div>
+  </div>
+  <div class="success" id="success">
+    <h2>🎉 Your workspace is ready!</h2>
+    <p>Welcome, <strong id="welcomeName"></strong>. Your AI agents are online and ready to help.</p>
+    <a href="https://artispreneur-landing.vercel.app/workspace.html" class="btn btn-gold">Open Your Dashboard →</a>
+  </div>
+</div>
+<div class="back-link"><a href="index.html">← Back to Artispreneur</a></div>
+<script>
+let step=1;
+function goStep(n){
+  if(n===2){const u=document.getElementById('username').value.trim(),e=document.getElementById('email').value.trim(),p=document.getElementById('password').value.trim();if(!u||!e||!p)return alert('Please fill in all account fields');if(p.length<8)return alert('Password must be at least 8 characters')}
+  if(n===3){if(!document.getElementById('artistName').value.trim())return alert('Please enter your artist name');updateSoul()}
+  step=n;document.querySelectorAll('.form-step').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n).classList.add('active');
+  ['dot1','dot2','dot3'].forEach((d,i)=>{const el=document.getElementById(d);el.classList.remove('active','done');if(i+1<n)el.classList.add('done');if(i+1===n)el.classList.add('active')})
+}
+function updateSoul(){const a=document.getElementById('artistName').value||'Artist',t=document.getElementById('artistType').value,g=document.getElementById('genre').value,s=document.getElementById('stage').value,p=document.getElementById('pro').value,l=document.getElementById('hasLLC').value,n=document.getElementById('notes').value||'',goals=Array.from(document.querySelectorAll('#step3 input:checked')).map(cb=>cb.parentElement.textContent.trim()).filter(g=>g!=='All of the above');const soul=`# Artist: ${a}\n# Type: ${t}\n# Genre: ${g}\n# Stage: ${s}\n# PRO: ${p}\n# Business: ${l}\n# Goals:\n${goals.map(g=>'# - '+g).join('\n')}\n${n?'# Notes:\n# '+n.split('\\n').join('\\n# '):''}`;document.getElementById('soulPreview').textContent=soul}
+function submitSignup(){updateSoul();document.getElementById('welcomeName').textContent=document.getElementById('artistName').value||document.getElementById('firstName').value;document.querySelectorAll('.form-step,.steps').forEach(s=>s.style.display='none');document.getElementById('dot3').classList.add('done');document.getElementById('success').style.display='block'}
+</script>
+</body>
+</html>

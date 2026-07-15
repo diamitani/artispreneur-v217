@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Directory — Artispreneur</title>
+<meta name="description" content="Find venues, radio stations, blogs, press contacts, podcasts, and community resources for independent musicians.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--black:#09090b;--surface:#18181b;--card:#1c1c1f;--border:#27272a;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#71717a;--gold:#c9a227}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--black);color:var(--text);line-height:1.6}
+a{color:var(--gold);text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 24px;background:rgba(9,9,11,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.navbar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-brand{display:flex;align-items:center;gap:8px}
+.nav-brand span{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;letter-spacing:-.5px}
+.nav-brand .gold{color:var(--gold)}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:var(--text-muted);font-size:13px;font-weight:500;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;font-weight:700;font-size:13px;transition:all .15s;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-gold{background:var(--gold);color:var(--black)}.btn-gold:hover{background:#e8c84a}
+main{padding-top:100px;padding-bottom:80px}
+h1{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:900;text-align:center;margin-bottom:8px}
+.sub{text-align:center;font-size:15px;color:var(--text-muted);margin-bottom:32px}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;transition:all .15s}
+.cat-card:hover{border-color:var(--gold)}
+.cat-card .emoji{font-size:28px;margin-bottom:10px}
+.cat-card h3{font-size:17px;font-weight:700;margin-bottom:4px}
+.cat-card .count{font-size:24px;font-weight:800;color:var(--gold)}
+.cat-card p{font-size:13px;color:var(--text-muted);margin-top:6px;line-height:1.5}
+.cta{text-align:center;margin-top:48px;padding:36px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:8px}
+.cta p{font-size:14px;color:var(--text-muted);margin-bottom:16px}
+footer{background:var(--card);border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--text-dim)}
+@media(max-width:768px){.cat-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}}
+@media(max-width:480px){.cat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="nav-brand"><img src="logo.png" alt="A" style="height:20px"><span>Artis<span class="gold">preneur</span></span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="academy.html">Academy</a>
+      <a href="directory.html" class="active">Directory</a>
+      <a href="signup.html" class="btn btn-gold" style="font-size:12px;padding:7px 16px">Sign Up Free</a>
+    </div>
+  </div>
+</nav>
+<main class="container">
+  <h1>Industry Directory</h1>
+  <p class="sub">74+ contacts across 6 categories. Venues, radio, blogs, press, podcasts, and community resources — all in one place.</p>
+  <div class="cat-grid">
+    <div class="cat-card"><div class="emoji">🎤</div><h3>Venues & Live Music</h3><div class="count">30</div><p>Chicago venues + national stages with booking contact info.</p><a href="https://artispreneur-landing.vercel.app/directory.html" style="font-size:12px;font-weight:600;margin-top:10px;display:inline-block">Browse venues →</a></div>
+    <div class="cat-card"><div class="emoji">📻</div><h3>Radio Stations</h3><div class="count">22</div><p>College, community, and commercial stations that play independent music.</p><a href="https://artispreneur-landing.vercel.app/directory.html" style="font-size:12px;font-weight:600;margin-top:10px;display:inline-block">Browse stations →</a></div>
+    <div class="cat-card"><div class="emoji">📝</div><h3>Music Blogs & Publications</h3><div class="count">18</div><p>From Pitchfork to niche genre blogs — outlets that review independent artists.</p><a href="https://artispreneur-landing.vercel.app/directory.html" style="font-size:12px;font-weight:600;margin-top:10px;display:inline-block">Browse blogs →</a></div>
+    <div class="cat-card"><div class="emoji">📰</div><h3>Press & Media</h3><div class="count">11</div><p>Journalists and media outlets covering music. Pitch your story.</p><a href="https://artispreneur-landing.vercel.app/directory.html" style="font-size:12px;font-weight:600;margin-top:10px;display:inline-block">Browse press →</a></div>
+    <div class="cat-card"><div class="emoji">🎙</div><h3>Music Podcasts</h3><div class="count">12</div><p>Industry podcasts, songwriting shows, and discovery shows.</p><a href="https://artispreneur-landing.vercel.app/directory.html" style="font-size:12px;font-weight:600;margin-top:10px;display:inline-block">Browse podcasts →</a></div>
+    <div class="cat-card"><div class="emoji">🏛</div><h3>Community & Government</h3><div class="count">11</div><p>Arts orgs, grant programs, and local resources for artists.</p><a href="https://artispreneur-landing.vercel.app/directory.html" style="font-size:12px;font-weight:600;margin-top:10px;display:inline-block">Browse resources →</a></div>
+  </div>
+  <div class="cta">
+    <h2>Need the full searchable directory?</h2>
+    <p>Filter, search, and browse all contacts on the full directory.</p>
+    <a href="https://artispreneur-landing.vercel.app/directory.html" class="btn btn-gold">Open Full Directory →</a>
+  </div>
+</main>
+<footer><p>© 2026 Artispreneur · Art Means Business</p></footer>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academy — Artispreneur</title>
+<meta name="description" content="Free music business courses for independent artists. Learn royalties, branding, distribution, legal, and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--black:#09090b;--surface:#18181b;--card:#1c1c1f;--border:#27272a;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#71717a;--gold:#c9a227}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--black);color:var(--text);line-height:1.6}
+a{color:var(--gold);text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 24px;background:rgba(9,9,11,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.navbar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-brand{display:flex;align-items:center;gap:8px}
+.nav-brand span{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;letter-spacing:-.5px}
+.nav-brand .gold{color:var(--gold)}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:var(--text-muted);font-size:13px;font-weight:500}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;font-weight:700;font-size:13px;transition:all .15s;border:none;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-gold{background:var(--gold);color:var(--black)}.btn-gold:hover{background:#e8c84a}
+main{padding-top:100px;padding-bottom:80px}
+h1{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,42px);font-weight:900;text-align:center;margin-bottom:8px}
+.sub{text-align:center;font-size:15px;color:var(--text-muted);margin-bottom:40px}
+.courses-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.course-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;transition:all .15s}
+.course-card:hover{border-color:var(--gold)}
+.course-card .cat{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-bottom:10px;display:inline-block}
+.course-card h3{font-size:14px;font-weight:700;line-height:1.3;margin-bottom:6px}
+.course-card p{font-size:12px;color:var(--text-muted);line-height:1.5}
+.course-card .lessons{font-size:11px;color:var(--text-dim);margin-top:8px}
+.cta{text-align:center;margin-top:60px;padding:40px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
+.cta h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:8px}
+.cta p{font-size:14px;color:var(--text-muted);margin-bottom:16px}
+footer{background:var(--card);border-top:1px solid var(--border);padding:32px 0;text-align:center;font-size:12px;color:var(--text-dim)}
+@media(max-width:900px){.courses-grid{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:600px){.courses-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="nav-brand"><img src="logo.png" alt="A" style="height:20px"><span>Artis<span class="gold">preneur</span></span></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="academy.html" class="active">Academy</a>
+      <a href="directory.html">Directory</a>
+      <a href="signup.html" class="btn btn-gold" style="font-size:12px;padding:7px 16px">Sign Up Free</a>
+    </div>
+  </div>
+</nav>
+<main class="container">
+  <h1>Free Music Business Courses</h1>
+  <p class="sub">Everything labels know, taught for free. 16 courses, 307 lessons — pick one and start learning.</p>
+  <div class="courses-grid" id="coursesGrid"></div>
+  <div class="cta">
+    <h2>Want the full experience?</h2>
+    <p>Get video lessons, progress tracking, and certificates on the full Academy.</p>
+    <a href="https://academy-build.vercel.app" class="btn btn-gold">Open Full Academy →</a>
+  </div>
+</main>
+<footer><p>© 2026 Artispreneur · Art Means Business</p></footer>
+<script>
+const courses=[{t:"How to Brand Yourself as an Artist",c:"Branding",n:18,u:"https://artispreneur-landing.vercel.app/courses/brand-yourself-as-artist.html"},{t:"How to Add Music to Collaborative Playlist",c:"Streaming",n:14,u:"https://artispreneur-landing.vercel.app/courses/add-music-collaborative-playlist.html"},{t:"How to Add Songs to Your PRO",c:"Royalties",n:20,u:"https://artispreneur-landing.vercel.app/courses/add-songs-to-pro.html"},{t:"How to Book and Promote Shows",c:"Marketing",n:16,u:"https://artispreneur-landing.vercel.app/courses/promote-your-shows.html"},{t:"How to Copyright Your Music",c:"Legal",n:19,u:"https://artispreneur-landing.vercel.app/courses/copyright-your-music.html"},{t:"How to Create a Music Catalogue",c:"Business",n:16,u:"https://artispreneur-landing.vercel.app/courses/create-music-catalogue.html"},{t:"How to Distribute Your Music",c:"Distribution",n:21,u:"https://artispreneur-landing.vercel.app/courses/distribute-your-music.html"},{t:"How to File Business Taxes",c:"Finance",n:23,u:"https://artispreneur-landing.vercel.app/courses/file-business-taxes.html"},{t:"How to Set Up a Business Bank Account",c:"Finance",n:20,u:"https://artispreneur-landing.vercel.app/courses/setup-business-bank-account.html"},{t:"How to Set Up an LLC",c:"Legal",n:20,u:"https://artispreneur-landing.vercel.app/courses/setup-llc.html"},{t:"How to Set Up a CRM",c:"Business",n:20,u:"https://artispreneur-landing.vercel.app/courses/setup-crm.html"},{t:"How to Submit to Blogs & Playlists",c:"Marketing",n:23,u:"https://artispreneur-landing.vercel.app/courses/submit-music-blogs-playlists.html"},{t:"How to License Your Music",c:"Licensing",n:21,u:"https://artispreneur-landing.vercel.app/courses/license-your-music.html"},{t:"How to Register an E.I.N.",c:"Legal",n:20,u:"https://artispreneur-landing.vercel.app/courses/register-ein.html"},{t:"How to Register with a P.R.O.",c:"Royalties",n:17,u:"https://artispreneur-landing.vercel.app/courses/register-with-pro.html"},{t:"How to Trademark Your Music",c:"Legal",n:19,u:"https://artispreneur-landing.vercel.app/courses/trademark-your-music.html"}];
+const cols={Branding:'#ef4444',Streaming:'#22c55e',Royalties:'#3b82f6',Marketing:'#a855f7',Legal:'#06b6d2',Business:'#c9a227',Distribution:'#f97316',Finance:'#22c55e',Licensing:'#a855f7'};
+document.getElementById('coursesGrid').innerHTML=courses.map(c=>`<a href="${c.u}" class="course-card"><span class="cat" style="background:${(cols[c.c]||'#c9a227')+'20'};color:${cols[c.c]||'#c9a227'}">${c.c}</span><h3>${c.t}</h3><p>${c.n} lessons with full breakdowns</p><span class="lessons">${c.n} modules →</span></a>`).join('');
+</script>
+</body>
+</html>

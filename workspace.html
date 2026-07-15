@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Workspace — Artispreneur OS</title>
+<meta name="description" content="Your AI agent workspace. Chat, skills, prompts, and outputs — all in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090b;--surface:#111113;--card:#18181b;--border:#252529;--border-light:#333338;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#63636b;--gold:#c9a227;--gold-light:#e0b832;--gold-subtle:rgba(201,162,39,0.08);--gold-glow:rgba(201,162,39,0.15);--accent-red:#ef4444;--accent-green:#22c55e;--accent-blue:#3b82f6;--accent-purple:#a855f7;--accent-cyan:#06b6d2;--accent-orange:#f97316;--radius:10px;--radius-lg:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+a{color:var(--gold);text-decoration:none}
+input,textarea,button{font-family:'Inter',sans-serif}
+::selection{background:var(--gold-subtle);color:var(--gold)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--border-light)}
+
+.app{display:grid;grid-template-columns:240px 1fr 0px;height:100vh;transition:grid-template-columns .3s ease}
+.app.context-open{grid-template-columns:240px 1fr 320px}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{display:flex;align-items:center;gap:10px;padding:16px;border-bottom:1px solid var(--border)}
+.sidebar-header img{height:20px}
+.sidebar-header .brand{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;letter-spacing:-.5px}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px}
+.nav-section{padding:8px 8px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:1px 0;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .1s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:var(--gold-subtle);color:var(--gold)}
+.nav-item .badge{font-size:10px;padding:1px 6px;border-radius:100px;margin-left:auto;background:var(--card);color:var(--text-dim)}
+.nav-item .badge.on{background:rgba(34,197,94,.12);color:var(--accent-green)}
+.sidebar-footer{padding:12px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;overflow:hidden;position:relative}
+.main-toolbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);min-height:49px}
+.main-toolbar .title{font-size:14px;font-weight:700}
+.main-toolbar .agent-select{display:flex;align-items:center;gap:8px;padding:5px 12px;border-radius:7px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .1s}
+.main-toolbar .agent-select:hover{border-color:var(--border-light)}
+.agent-avatar{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.agent-avatar.pro{background:rgba(201,162,39,.15);color:var(--gold)}.agent-avatar.dist{background:rgba(34,197,94,.15);color:var(--accent-green)}.agent-avatar.lic{background:rgba(168,85,247,.15);color:var(--accent-purple)}.agent-avatar.legal{background:rgba(59,130,246,.15);color:var(--accent-blue)}.agent-avatar.fin{background:rgba(6,182,210,.15);color:var(--accent-cyan)}.agent-avatar.mgr{background:rgba(249,115,22,.15);color:var(--accent-orange)}
+
+/* CHAT — Modern flat design */
+.chat-container{flex:1;overflow-y:auto;padding:28px;display:flex;flex-direction:column;gap:18px}
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.chat-empty h2{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;margin-bottom:8px}
+.chat-empty p{font-size:14px;color:var(--text-muted);max-width:400px;line-height:1.6}
+.chat-empty .suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:24px}
+.suggestion{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:9px 18px;font-size:12px;color:var(--text-muted);cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+.suggestion:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-subtle);transform:translateY(-1px)}
+
+.message{display:flex;gap:12px;max-width:780px;animation:msgIn .25s ease}
+.message.agent{align-self:flex-start}.message.user{align-self:flex-end;flex-direction:row-reverse}
+.message .avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.message.user .avatar{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg)}
+.message.agent .avatar{background:var(--card);border:1px solid var(--border);color:var(--text-muted)}
+.message .bubble{max-width:100%;padding:14px 18px;border-radius:18px;font-size:13.5px;line-height:1.65;color:var(--text)}
+.message.agent .bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:6px;color:var(--text-muted)}
+.message.user .bubble{background:linear-gradient(135deg,var(--gold-subtle),rgba(201,162,39,0.15));border:1px solid rgba(201,162,39,0.2);border-bottom-right-radius:6px;color:var(--text)}
+.message .bubble p{margin:4px 0}.message .bubble p:first-child{margin-top:0}
+.message .time{font-size:10px;color:var(--text-dim);margin-top:6px;padding:0 4px}
+.typing{display:flex;align-items:center;gap:4px;padding:4px 0}
+.typing span{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:bounce 1.4s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,80%,100%{transform:scale(1);opacity:.4}40%{transform:scale(1.3);opacity:1}}
+
+/* CHAT INPUT */
+.chat-footer{border-top:1px solid var(--border);padding:16px 20px}
+.chat-input-wrap{display:flex;align-items:flex-end;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:8px 14px;transition:border-color .2s}
+.chat-input-wrap:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-subtle)}
+.chat-input-wrap textarea{flex:1;background:none;border:none;color:var(--text);font-size:13.5px;line-height:1.5;resize:none;outline:none;padding:6px 0;max-height:120px;font-family:'Inter',sans-serif}
+.chat-input-wrap textarea::placeholder{color:var(--text-dim)}
+.send-btn{width:34px;height:34px;border-radius:9px;border:none;background:var(--gold);color:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.send-btn:hover{background:var(--gold-light)}
+.send-btn:disabled{opacity:.3;cursor:default}
+.char-count{font-size:10px;color:var(--text-dim);padding:4px 16px 0;text-align:right}
+
+/* CONTEXT PANEL */
+.context-panel{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;display:none}
+.app.context-open .context-panel{display:block}
+.context-section{padding:16px;border-bottom:1px solid var(--border)}
+.context-section h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:10px}
+.context-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:6px;font-size:12px;cursor:pointer;transition:all .1s}
+.context-card:hover{border-color:var(--border-light)}
+.context-card .title{font-weight:600;margin-bottom:2px}
+.context-card .meta{font-size:10px;color:var(--text-dim)}
+
+/* COMMAND PALETTE */
+.cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding-top:15vh}
+.cmd-overlay.open{display:flex}
+.cmd-palette{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:560px;max-height:400px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.cmd-palette input{width:100%;padding:16px 20px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:16px;outline:none;font-family:'Inter',sans-serif}
+.cmd-results{max-height:300px;overflow-y:auto}
+.cmd-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;transition:all .08s}
+.cmd-item:hover,.cmd-item.selected{background:var(--card)}
+.cmd-item .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--card)}
+.cmd-item .info{flex:1}.cmd-item .info .name{font-size:13px;font-weight:600}.cmd-item .info .desc{font-size:11px;color:var(--text-dim)}
+.cmd-item .shortcut{font-size:10px;color:var(--text-dim);background:var(--bg);padding:2px 6px;border-radius:4px;font-family:'Geist Mono',monospace}
+
+/* SKILLS OVERLAY */
+.skills-panel{position:absolute;inset:0;background:var(--bg);z-index:10;display:none;flex-direction:column}
+.skills-panel.open{display:flex}
+.skills-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.skills-header h3{font-size:15px;font-weight:700}
+.skills-search{width:100%;padding:10px 16px;background:var(--card);border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:14px;outline:none}
+.skills-grid{flex:1;overflow-y:auto;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-content:start}
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .1s}
+.skill-card:hover{border-color:var(--gold)}
+.skill-card .skill-icon{font-size:18px;margin-bottom:8px}
+.skill-card .skill-name{font-size:13px;font-weight:600;margin-bottom:4px}
+.skill-card .skill-desc{font-size:11px;color:var(--text-dim);line-height:1.4}
+.skill-card .skill-meta{display:flex;gap:8px;margin-top:8px;font-size:10px;color:var(--text-dim)}
+.skill-card .install-btn{margin-top:10px;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif}
+.skill-card .install-btn:hover{border-color:var(--gold);color:var(--gold)}
+.skill-card .install-btn.installed{background:var(--gold-subtle);border-color:var(--gold);color:var(--gold)}
+
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--text-muted);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;padding:6px 10px;border-radius:6px}
+.back-btn:hover{color:var(--text);background:var(--card)}
+
+/* Plan card */
+.plan-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.plan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.plan-progress{font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(34,197,94,.12);color:var(--accent-green)}
+.plan-steps{display:flex;flex-direction:column;gap:7px}
+.plan-step{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--text-muted)}
+.step-check{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;background:var(--surface);border:1.5px solid var(--border);flex-shrink:0}
+/* Tool card */
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.tool-header{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.tool-icon{width:24px;height:24px;border-radius:6px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:12px}
+.tool-name{font-family:'Geist Mono',monospace;font-size:12px;font-weight:500}
+.tool-check{color:var(--accent-green);font-size:13px;margin-left:auto}
+.tool-summary{font-size:11px;color:var(--text-dim);line-height:1.4}
+.tool-time{font-family:'Geist Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:4px}
+/* Artifact card */
+.artifact-card{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border .15s}
+.artifact-card:hover{border-color:var(--gold)}
+.artifact-icon{width:32px;height:32px;border-radius:8px;background:var(--gold-subtle);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.artifact-name{font-size:12px;font-weight:600}.artifact-meta{font-size:10px;color:var(--text-dim)}
+.artifact-dl{font-size:14px;color:var(--text-dim);margin-left:auto}
+/* Composer agent select */
+.composer-actions{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:6px 12px 12px}
+.composer-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-muted);background:var(--card);border-radius:6px;padding:5px 10px;cursor:pointer;border:1px solid var(--border);font-family:'Inter',sans-serif;transition:all .1s}
+.composer-chip:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.app.context-open{grid-template-columns:1fr}.context-panel{position:fixed;right:0;top:0;bottom:0;width:300px;z-index:20}}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="logo.png" alt="A"><span class="brand"><span style="color:var(--gold)">Artis</span>preneur</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Workspace</div>
+      <button class="nav-item active" onclick="switchView('chat')">⌂ Chat</button>
+      <button class="nav-item" onclick="switchView('agents')">◈ Agents <span class="badge on">4 on</span></button>
+      <button class="nav-item" onclick="openSkills()">⚙ Skills <span class="badge">12</span></button>
+      <button class="nav-item" onclick="switchView('outputs')">📁 Outputs <span class="badge">5</span></button>
+      <div class="nav-section" style="margin-top:8px">Library</div>
+      <button class="nav-item" onclick="switchView('prompts')">✦ Prompts</button>
+      <button class="nav-item" onclick="switchView('knowledge')">📚 Knowledge</button>
+      <button class="nav-item" onclick="switchView('academy')">🎓 Academy</button>
+      <button class="nav-item" onclick="switchView('directory')">◉ Directory</button>
+      <div class="nav-section" style="margin-top:8px">Account</div>
+      <button class="nav-item" onclick="switchView('settings')">⚙ Settings</button>
+      <a href="index.html" class="nav-item">← Exit</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-bottom:4px">
+          <span style="font-weight:600">Monthly agent usage</span><span id="usagePct">62%</span>
+        </div>
+        <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:62%;background:var(--gold);border-radius:2px" id="usageBar"></div>
+        </div>
+      </div>
+      <div class="sidebar-user">
+        <div class="agent-avatar pro" style="width:26px;height:26px;border-radius:7px">M</div>
+        <div><div style="font-size:12px;font-weight:600">Midnight</div><div style="font-size:10px;color:var(--text-dim)">Free Plan · 62% used</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- CHAT VIEW -->
+    <div id="view-chat" style="display:flex;flex-direction:column;height:100%">
+      <div class="main-toolbar">
+        <span class="title">Agent Chat</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="agent-select" id="agentSelect" onclick="cycleAgent()">
+            <div class="agent-avatar mgr" id="agentAvatar">◎</div>
+            <span id="agentName" style="font-size:12px;font-weight:600">Manager</span>
+            <span style="font-size:10px;color:var(--text-dim)">⌘1-6</span>
+          </div>
+          <button class="back-btn" onclick="toggleContext()" style="font-size:12px">⚡ Context</button>
+        </div>
+      </div>
+      <div class="chat-container" id="chatContainer">
+        <div class="chat-empty" id="chatEmpty">
+          <h2>What do you need?</h2>
+          <p>I'm your Manager Agent. I can handle anything — or route you to a specialist.</p>
+          <div class="suggestions">
+            <button class="suggestion" onclick="sendSuggestion('Register my new song with BMI')">🎵 Register my new song</button>
+            <button class="suggestion" onclick="sendSuggestion('Find playlists for my genre')">📀 Get on playlists</button>
+            <button class="suggestion" onclick="sendSuggestion('Help me set up an LLC')">⚖️ Set up an LLC</button>
+            <button class="suggestion" onclick="sendSuggestion('Analyze my streaming revenue')">💰 Revenue analysis</button>
+            <button class="suggestion" onclick="sendSuggestion('Create a splitsheet for my track')">📋 Create splitsheet</button>
+            <button class="suggestion" onclick="sendSuggestion('Find sync licensing opportunities')">🎬 Sync licensing</button>
+          </div>
+        </div>
+        <div id="chatMessages"></div>
+      </div>
+      <div class="chat-footer">
+        <div class="chat-input-wrap">
+          <textarea id="chatInput" placeholder="Ask anything — or type / for prompts..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this);updateCharCount()"></textarea>
+          <button class="send-btn" onclick="sendMessage()" id="sendBtn" disabled>↑</button>
+        </div>
+        <div class="composer-actions">
+          <span class="composer-chip" onclick="cycleAgent()">
+            <span class="agent-avatar mgr" id="composerAvatar" style="display:inline-flex;width:16px;height:16px;border-radius:4px;font-size:9px">◎</span>
+            <span id="composerAgent">Manager</span>
+            <span style="font-size:9px">▾</span>
+          </span>
+          <span style="flex:1"></span>
+          <span style="font-size:10px;color:var(--text-dim)">Type <code style="font-family:'Geist Mono',monospace;border:1px solid var(--border);border-radius:3px;padding:0 4px">/</code> for prompts</span>
+        </div>
+        <div class="char-count" id="charCount"></div>
+      </div>
+    </div>
+
+    <!-- OTHER VIEWS (placeholder — same as dashboard v2.1 but cleaner) -->
+    <div id="view-agents" style="display:none;flex-direction:column;height:100%;overflow-y:auto;padding:24px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:20px">Agents</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px" id="agentCards"></div>
+    </div>
+    <div id="view-outputs" style="display:none;padding:24px;overflow-y:auto">
+      <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:20px">Outputs</h2>
+      <div id="outputsList"></div>
+    </div>
+    <div id="view-prompts" style="display:none;padding:24px;overflow-y:auto">
+      <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:20px">Prompt Library</h2>
+      <div id="promptsList"></div>
+    </div>
+    <div id="view-knowledge" style="display:none;padding:24px;overflow-y:auto">
+      <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:16px">Knowledge Base</h2>
+      <pre style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--text-dim);white-space:pre-wrap;line-height:1.8;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px"># Artist: Midnight
+# Genre: Alternative R&B
+# PRO: BMI (IPI#: 0123456789)
+# Business: Midnight Music LLC (IL)
+# Distributor: UnitedMasters
+# Catalog: 14 works · $1,240 royalties YTD
+# Current: EP "Midnight in the Garden" (Aug 2026)
+# Goals: 100K streams, first sync, tour Q4</pre>
+    </div>
+  </main>
+
+  <!-- CONTEXT PANEL -->
+  <aside class="context-panel" id="contextPanel">
+    <div class="context-section"><h4>Project</h4><div class="context-card"><div class="title">📀 Midnight in the Garden EP</div><div class="meta">6 tracks · Release Aug 2026</div></div><div class="context-card"><div class="title">🎵 Gold Hour (Single)</div><div class="meta">Released · 12K streams</div></div></div>
+    <div class="context-section"><h4>Recent Outputs</h4><div class="context-card"><div class="title">📄 LLC Agreement v2</div><div class="meta">Legal Agent · 2d ago</div></div><div class="context-card"><div class="title">🎵 Metadata Export</div><div class="meta">PRO Agent · 3d ago</div></div></div>
+    <div class="context-section"><h4>Quick Actions</h4><div style="display:flex;flex-direction:column;gap:6px"><button class="suggestion" style="width:100%;text-align:left" onclick="sendSuggestion('Register new song')">♩ Register song</button><button class="suggestion" style="width:100%;text-align:left" onclick="sendSuggestion('Generate splitsheet')">📋 Splitsheet</button><button class="suggestion" style="width:100%;text-align:left" onclick="sendSuggestion('Find playlists')">📀 Playlists</button></div></div>
+  </aside>
+</div>
+
+<!-- SKILLS OVERLAY -->
+<div class="skills-panel" id="skillsPanel">
+  <div class="skills-header">
+    <h3>Skills Marketplace</h3>
+    <button class="back-btn" onclick="closeSkills()">✕ Close</button>
+  </div>
+  <input class="skills-search" placeholder="Search skills..." oninput="filterSkills(this.value)">
+  <div class="skills-grid" id="skillsGrid"></div>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div class="cmd-overlay" id="cmdOverlay" onclick="if(event.target===this)closeCmd()">
+  <div class="cmd-palette">
+    <input placeholder="Search agents, skills, prompts, settings..." id="cmdInput" oninput="filterCmd()" onkeydown="handleCmdKey(event)">
+    <div class="cmd-results" id="cmdResults"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentAgent = 'manager';
+const agents = {
+  pro: {name:'PRO Agent',icon:'♩',cls:'pro',color:'var(--gold)',desc:'BMI/ASCAP registration, royalties, splitsheets'},
+  distribution: {name:'Distribution Agent',icon:'↗',cls:'dist',color:'var(--accent-green)',desc:'DSP accounts, playlists, ad campaigns'},
+  licensing: {name:'Licensing Agent',icon:'⚡',cls:'lic',color:'var(--accent-purple)',desc:'Sync licensing, music libraries, pitches'},
+  legal: {name:'Legal Agent',icon:'§',cls:'legal',color:'var(--accent-blue)',desc:'LLC, EIN, contracts, operating agreements'},
+  finance: {name:'Finance Agent',icon:'$',cls:'fin',color:'var(--accent-cyan)',desc:'Banking, taxes, transaction analysis'},
+  manager: {name:'Manager Agent',icon:'◎',cls:'mgr',color:'var(--accent-orange)',desc:'Business plans, calendar, strategy, routing'},
+};
+
+const skills = [
+  {name:'PRO Registration',icon:'♩',desc:'Auto-register songs with BMI, ASCAP, or SESAC',cat:'PRO',installed:true},
+  {name:'Splitsheet Generator',icon:'📋',desc:'Create professional splitsheets from track metadata',cat:'PRO',installed:true},
+  {name:'Metadata Extractor',icon:'🎵',desc:'Extract ISRC, BPM, key from audio files',cat:'PRO',installed:false},
+  {name:'Playlist Submitter',icon:'📀',desc:'Auto-submit to genre-matched Spotify playlists',cat:'Distribution',installed:true},
+  {name:'Ad Campaign Manager',icon:'📣',desc:'Create and optimize social ads for releases',cat:'Distribution',installed:false},
+  {name:'DP Statistics',icon:'📊',desc:'Aggregate streaming stats across all DSPs',cat:'Distribution',installed:false},
+  {name:'Sync Opportunity Finder',icon:'🎬',desc:'Search music libraries and supervisor databases',cat:'Licensing',installed:false},
+  {name:'Pitch Template Generator',icon:'📝',desc:'Generate tailored pitch emails for supervisors',cat:'Licensing',installed:false},
+  {name:'LLC Formation',icon:'⚖️',desc:'File LLC formation documents with your state',cat:'Legal',installed:true},
+  {name:'Contract Generator',icon:'📄',desc:'Generate industry-standard music contracts',cat:'Legal',installed:true},
+  {name:'Tax Estimator',icon:'💰',desc:'Calculate quarterly estimated tax payments',cat:'Finance',installed:false},
+  {name:'Expense Tracker',icon:'📊',desc:'Categorize and track music business expenses',cat:'Finance',installed:false},
+  {name:'Release Planner',icon:'📅',desc:'Create release timelines with milestones',cat:'Manager',installed:true},
+  {name:'EPK Builder',icon:'📋',desc:'Generate professional Electronic Press Kits',cat:'Manager',installed:false},
+  {name:'Brand Kit Generator',icon:'🎨',desc:'Create consistent visual brand assets',cat:'Manager',installed:false},
+];
+
+const prompts = [
+  {cat:'Release',items:['Create a release strategy for my upcoming single','Generate metadata for my new EP','Build a Spotify pre-save campaign','Write my artist bio for press']},
+  {cat:'Promotion',items:['Find playlist curators for indie R&B','Write a pitch email to music blogs','Create a social media content calendar','Design a TikTok promotion strategy']},
+  {cat:'Legal',items:['Draft a producer agreement for my track','Review my collaboration contract','Walk me through LLC formation','Generate a work-for-hire agreement']},
+  {cat:'Finance',items:['Calculate my streaming royalties','Estimate quarterly taxes','Create a tour budget template','Analyze my revenue streams']},
+  {cat:'Creative',items:['Help me write song lyrics','Suggest chord progressions for R&B','Create a mood board for my album art','Brainstorm music video concepts']},
+];
+
+// ============================================================
+// CHAT
+// ============================================================
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  addMessage(msg, 'user');
+  input.value = ''; autoResize(input); updateCharCount();
+  document.getElementById('chatEmpty').style.display = 'none';
+  
+  // Typing indicator
+  const container = document.getElementById('chatMessages');
+  const typingEl = document.createElement('div');
+  typingEl.className = 'message agent';
+  typingEl.innerHTML = '<div class="avatar" style="background:var(--card)">⋯</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  container.appendChild(typingEl);
+  container.scrollTop = container.scrollHeight;
+  
+  // Simulate agent response
+  setTimeout(() => {
+    typingEl.remove();
+    const a = agents[currentAgent];
+    const low = msg.toLowerCase();
+    let resp;
+    if (low.includes('register')||low.includes('pro')||low.includes('bmi')||low.includes('ascap')) {
+      resp = `Let's register your music! Here's what I need:\n\n1. **Song title** and **ISRC** (if you have one)\n2. **Co-writers** and their **split percentages**\n3. Your **PRO** (I see you're with BMI)\n\nI can register this in about 2 minutes. Want me to proceed with the info I already have in your catalog?`;
+      switchAgent('pro');
+    } else if (low.includes('playlist')||low.includes('spotify')||low.includes('distribution')) {
+      resp = `Great news — I found 8 playlists matching your genre (Alternative R&B):\n\n• **Indie R&B Rising** (12K followers)\n• **Soulful Sundays** (8K followers)\n• **Late Night Vibes** (15K followers)\n\nI'll submit "Gold Hour" to all three. Want me to customize the pitch for each curator?`;
+      switchAgent('distribution');
+    } else if (low.includes('llc')||low.includes('contract')||low.includes('legal')) {
+      resp = `Your LLC (Midnight Music LLC) is already formed in Illinois. Here's what I can help with:\n\n• **Operating Agreement** — I have v2 ready for review\n• **EIN** — Registered and active\n• **Contract templates** — Producer, collaboration, work-for-hire\n\nWhat document do you need?`;
+      switchAgent('legal');
+    } else if (low.includes('tax')||low.includes('revenue')||low.includes('money')||low.includes('finance')) {
+      resp = `Here's your Q2 snapshot:\n\n| Stream | Revenue |\n|--------|--------|\n| Spotify | $680 |\n| Apple Music | $320 |\n| YouTube | $140 |\n| Sync (1 placement) | $100 |\n| **Total** | **$1,240** |\n\nYour Q3 estimated tax payment of ~$310 is due October 15. Want me to prepare the filing?`;
+      switchAgent('finance');
+    } else if (low.includes('license')||low.includes('sync')||low.includes('tv')||low.includes('film')) {
+      resp = `I found 3 sync opportunities matching your sound:\n\n1. **Netflix drama** — seeking moody R&B for season 3\n2. **Independent film** — looking for original music\n3. **Commercial** — tech brand seeking fresh artists\n\nI can prepare pitch packages for all three. Each includes your EPK, top tracks, and a tailored pitch. Want me to proceed?`;
+      switchAgent('licensing');
+    } else {
+      resp = `I can help with that. Here's what I'd recommend:\n\n• If this is about **royalties or registration**, I'll route to the PRO Agent\n• For **playlists or distribution**, the Distribution Agent\n• For **legal or contracts**, the Legal Agent\n• For **money matters**, the Finance Agent\n• For **licensing**, the Licensing Agent\n\nWhat direction should we take?`;
+    }
+    addMessage(resp, 'agent');
+  }, 1200);
+}
+
+function sendSuggestion(text) {
+  document.getElementById('chatInput').value = text;
+  sendMessage();
+}
+
+function switchAgent(key) {
+  currentAgent = key;
+  const a = agents[key];
+  document.getElementById('agentAvatar').textContent = a.icon;
+  document.getElementById('agentAvatar').className = 'agent-avatar ' + a.cls;
+  document.getElementById('agentName').textContent = a.name;
+}
+
+function cycleAgent() {
+  const keys = Object.keys(agents);
+  const idx = keys.indexOf(currentAgent);
+  const next = keys[(idx + 1) % keys.length];
+  switchAgent(next);
+}
+
+function addMessage(text, role, extra) {
+  const container = document.getElementById('chatMessages');
+  const el = document.createElement('div');
+  el.className = 'message ' + role;
+  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const avatarIcon = role === 'user' ? 'M' : agents[currentAgent].icon;
+  const avatarClass = role === 'user' ? '' : agents[currentAgent].cls;
+  
+  let bodyHtml = '';
+  if (extra === 'plan') {
+    bodyHtml = `<div class="plan-card"><div class="plan-header"><span>📋 Plan</span><span class="plan-progress">In Progress</span></div><div class="plan-steps">${text.split('|').map((s,i) => `<div class="plan-step"><span class="step-check">${i===0?'✓':i+1}</span><span>${s.trim()}</span></div>`).join('')}</div></div>`;
+  } else if (extra === 'tool') {
+    const [toolName, toolSummary, toolTime] = text.split('||');
+    bodyHtml = `<div class="tool-card"><div class="tool-header"><span class="tool-icon">⚡</span><span class="tool-name">${toolName||'Tool'}</span><span class="tool-check">✓</span></div><div class="tool-summary">${toolSummary||''}</div><div class="tool-time">${toolTime||'just now'}</div></div>`;
+  } else if (extra === 'artifact') {
+    const [fileName, fileMeta] = text.split('||');
+    bodyHtml = `<div class="artifact-card"><div class="artifact-icon">📄</div><div class="artifact-info"><div class="artifact-name">${fileName||'file.pdf'}</div><div class="artifact-meta">${fileMeta||'Generated'}</div></div><span class="artifact-dl">⬇</span></div>`;
+  } else {
+    bodyHtml = text.split('\n').map(l => l.startsWith('•')||l.startsWith('|')||l.startsWith('1.')||l.startsWith('2.')||l.startsWith('3.') ? l : l ? `<p>${l}</p>` : '<br>').join('');
+  }
+  
+  el.innerHTML = `
+    <div class="avatar${avatarClass ? ' agent-avatar '+avatarClass : ''}" style="${role==='user'?'background:var(--gold-subtle);color:var(--gold)':''}">${avatarIcon}</div>
+    function switchAgent(key) {
+      currentAgent = key;
+      const a = agents[key];
+      document.getElementById('agentAvatar').textContent = a.icon;
+      document.getElementById('agentAvatar').className = 'agent-avatar ' + a.cls;
+      document.getElementById('agentName').textContent = a.name;
+      // Sync composer
+      document.getElementById('composerAvatar').textContent = a.icon;
+      document.getElementById('composerAvatar').className = 'agent-avatar ' + a.cls;
+      document.getElementById('composerAvatar').style.cssText = 'display:inline-flex;width:16px;height:16px;border-radius:4px;font-size:9px';
+      document.getElementById('composerAgent').textContent = a.name.split(' ')[0];
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); openCmd(); }
+      if (e.key === '/' && !e.target.value) { e.preventDefault(); showPromptMenu(); }
+      if (e.key >= '1' && e.key <= '6' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        switchAgent(Object.keys(agents)[e.key - 1]);
+      }
+    }
+
+    function showPromptMenu() {
+      const menu = document.createElement('div');
+      menu.style.cssText = 'position:absolute;bottom:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px;margin-bottom:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px;z-index:20';
+      menu.innerHTML = prompts.flatMap(c => c.items.slice(0,2)).map(p => `<div style="padding:6px 10px;border-radius:6px;font-size:12px;color:var(--text-muted);cursor:pointer" onclick="document.getElementById('chatInput').value='${p}';this.parentElement.remove();document.getElementById('chatInput').focus()" onmouseover="this.style.background='var(--card)'" onmouseout="this.style.background='none'">/${p.slice(0,40)}...</div>`).join('');
+      menu.id = 'promptMenu';
+      const wrap = document.querySelector('.chat-footer');
+      wrap.style.position = 'relative';
+      wrap.appendChild(menu);
+      setTimeout(() => { const m = document.getElementById('promptMenu'); if (m) m.remove(); }, 5000);
+    }
+
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+function updateCharCount() { document.getElementById('charCount').textContent = document.getElementById('chatInput').value.length; document.getElementById('sendBtn').disabled = !document.getElementById('chatInput').value.trim(); }
+
+// ============================================================
+// VIEW SWITCHING
+// ============================================================
+function switchView(view) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const views = ['chat','agents','outputs','prompts','knowledge','academy','directory','settings'];
+  views.forEach(v => { const el = document.getElementById('view-'+v); if (el) el.style.display = v===view ? 'flex' : 'none'; });
+  document.getElementById('view-chat').style.display = view==='chat' ? 'flex' : 'none';
+  // Build content for views
+  if (view === 'agents') buildAgentCards();
+  if (view === 'outputs') buildOutputs();
+  if (view === 'prompts') buildPrompts();
+}
+
+function buildAgentCards() {
+  document.getElementById('agentCards').innerHTML = Object.entries(agents).map(([k,a]) => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .15s" onclick="switchAgent('${k}');switchView('chat')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:15px;font-weight:700"><span class="agent-avatar ${a.cls}" style="display:inline-flex;margin-right:8px">${a.icon}</span>${a.name}</span>
+        <span style="font-size:10px;padding:2px 8px;border-radius:100px;background:rgba(34,197,94,.12);color:var(--accent-green)">Active</span>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted)">${a.desc}</p>
+    </div>`).join('');
+}
+
+function buildOutputs() {
+  document.getElementById('outputsList').innerHTML = [
+    {name:'LLC_Operating_Agreement_v2.pdf',agent:'Legal Agent',time:'2 days ago',tag:'Final'},
+    {name:'Metadata_Export_EP_2026.xlsx',agent:'PRO Agent',time:'3 days ago',tag:'Final'},
+    {name:'Q2_Revenue_Analysis.pdf',agent:'Finance Agent',time:'5 days ago',tag:'Final'},
+    {name:'Sync_Pitch_Draft_v3.docx',agent:'Licensing Agent',time:'6 days ago',tag:'Draft'},
+  ].map(o=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">📄</span><div><div style="font-weight:600">${o.name}</div><div style="font-size:11px;color:var(--text-dim)">${o.agent} · ${o.time}</div></div></div><span style="font-size:10px;padding:3px 8px;border-radius:100px;background:${o.tag==='Final'?'rgba(34,197,94,.12)':'rgba(168,85,247,.12)'};color:${o.tag==='Final'?'var(--accent-green)':'var(--accent-purple)'};font-weight:600">${o.tag}</span></div>`).join('');
+}
+
+function buildPrompts() {
+  document.getElementById('promptsList').innerHTML = prompts.map(c => `
+    <div style="margin-bottom:24px">
+      <h4 style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:8px">${c.cat}</h4>
+      ${c.items.map(p => `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;transition:all .1s" onclick="sendSuggestion('${p}');switchView('chat')" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'"><span style="font-size:13px;color:var(--text-muted)">${p}</span><span style="font-size:10px;color:var(--text-dim)">Use →</span></div>`).join('')}
+    </div>`).join('');
+}
+
+// ============================================================
+// SKILLS
+// ============================================================
+function openSkills() {
+  document.getElementById('skillsPanel').classList.add('open');
+  renderSkills();
+}
+function closeSkills() { document.getElementById('skillsPanel').classList.remove('open'); }
+function renderSkills(filter='') {
+  const filtered = filter ? skills.filter(s => s.name.toLowerCase().includes(filter)||s.cat.toLowerCase().includes(filter)) : skills;
+  document.getElementById('skillsGrid').innerHTML = filtered.map(s => `
+    <div class="skill-card">
+      <div class="skill-icon">${s.icon}</div>
+      <div class="skill-name">${s.name}</div>
+      <div class="skill-desc">${s.desc}</div>
+      <div class="skill-meta"><span>${s.cat}</span></div>
+      <button class="install-btn ${s.installed?'installed':''}" onclick="toggleSkill(this,'${s.name}')">${s.installed?'✓ Installed':'+ Install'}</button>
+    </div>`).join('');
+}
+function filterSkills(q) { renderSkills(q.toLowerCase()); }
+function toggleSkill(btn, name) {
+  const skill = skills.find(s => s.name === name);
+  skill.installed = !skill.installed;
+  btn.textContent = skill.installed ? '✓ Installed' : '+ Install';
+  btn.classList.toggle('installed', skill.installed);
+}
+
+// ============================================================
+// COMMAND PALETTE
+// ============================================================
+function openCmd() { document.getElementById('cmdOverlay').classList.add('open'); document.getElementById('cmdInput').focus(); filterCmd(); }
+function closeCmd() { document.getElementById('cmdOverlay').classList.remove('open'); }
+function filterCmd() {
+  const q = (document.getElementById('cmdInput').value||'').toLowerCase();
+  const items = [
+    ...Object.entries(agents).map(([k,a]) => ({type:'agent',icon:a.icon,name:a.name,desc:a.desc,action:()=>{switchAgent(k);switchView('chat');closeCmd()}})),
+    ...skills.map(s => ({type:'skill',icon:s.icon,name:s.name,desc:s.desc,action:()=>{openSkills();closeCmd()}})),
+    ...prompts.flatMap(c => c.items.map(p => ({type:'prompt',icon:'✦',name:p,desc:c.cat,action:()=>{sendSuggestion(p);switchView('chat');closeCmd()}}))),
+    {type:'action',icon:'⚙',name:'Toggle Context Panel',desc:'Show/hide project context',action:()=>{toggleContext();closeCmd()}},
+    {type:'action',icon:'📁',name:'View Outputs',desc:'Generated files',action:()=>{switchView('outputs');closeCmd()}},
+  ];
+  const filtered = q ? items.filter(i => i.name.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q)) : items.slice(0,8);
+  document.getElementById('cmdResults').innerHTML = filtered.map((i,idx) => `
+    <div class="cmd-item ${idx===0?'selected':''}" onclick="(${i.action.toString()})()">
+      <div class="icon">${i.icon}</div>
+      <div class="info"><div class="name">${i.name}</div><div class="desc">${i.desc}</div></div>
+      <span class="shortcut">${i.type}</span>
+    </div>`).join('');
+}
+function handleCmdKey(e) {
+  if (e.key === 'Escape') closeCmd();
+  if (e.key === 'Enter') {
+    const sel = document.querySelector('.cmd-item.selected');
+    if (sel) sel.click();
+  }
+}
+
+// ============================================================
+// CONTEXT TOGGLE
+// ============================================================
+function toggleContext() { document.getElementById('app').classList.toggle('context-open'); }
+
+// Init
+document.addEventListener('keydown', e => {
+  if (e.key === 'k' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); openCmd(); }
+});
+</script>
+</body>
+</html>
