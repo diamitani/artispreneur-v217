@@ -76,6 +76,8 @@ class AgentRegistry:
             return 'legal'
         if any(w in m for w in ['tax','finance','bank','revenue','money','budget','expense','quarterly','deduction']):
             return 'finance'
+        if any(w in m for w in ['compile','rostr','pal','manifest','soul','build package']):
+            return 'rostr'
         return 'manager'
     
     def all_agents(self) -> list[dict]:
