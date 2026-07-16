@@ -10,7 +10,8 @@ class ManagerAgent(BaseAgent):
             Tool("research","Research a topic in the music industry",self._research,{"topic":"string"}),
             Tool("route_to_agent","Route a task to a specialist agent",self._route,{"task":"string","agent_type":"string"}),
             Tool("daily_briefing","Generate a daily briefing of priorities",self._briefing,{}),
-            Tool("generate_content","Create social media or marketing content",self._content,{"type":"string","topic":"string","tone":"string?"}),
+            Tool("generate_voiceover","Generate audio voiceover using Remy (Resemble AI)",self._voiceover,{"text":"string"}),
+            Tool("generate_content", "Create social media or marketing content", self._content, {"type":"string","topic":"string","tone":"string?"}),
         ]
     def system_prompt(self,**kw):return f"""You are the Manager Agent for Artispreneur. You orchestrate the other 5 specialist agents, manage calendars, create business plans, and handle general tasks.
 Available specialists: PRO Agent (royalties/registration), Distribution Agent (playlists/DSPs), Licensing Agent (sync/TV/film), Legal Agent (LLC/contracts), Finance Agent (taxes/revenue).
@@ -21,4 +22,7 @@ Route specific requests to the right specialist. For general strategy, planning,
     def _route(self,task:str,agent_type:str):return {"routed_to":agent_type,"task":task,"status":"transferred","note":f"Task sent to {agent_type} agent for processing"}
     def _briefing(self):return {"date":"Today","priorities":["Review LLC operating agreement","Submit Gold Hour to 3 playlists","Check BMI royalty statement","Prepare Q3 tax estimate"],"agents_active":4}
     def _content(self,typ:str,topic:str,tone:str="professional"):return {"type":typ,"topic":topic,"tone":tone,"content":[f"🔥 New music coming... {topic}","🎵 Behind the scenes of {topic}","💭 The story behind {topic}"],"best_time_to_post":"Wed 6pm, Sat 12pm"}
+    def _voiceover(self, text: str) -> dict:
+        from backend.tts import generate_voiceover
+        return generate_voiceover(text)
 registry.add(ManagerAgent())
