@@ -2,6 +2,7 @@ variable "aws_region" { type=string; default="us-east-1" }
 variable "environment" { type=string; default="dev" }
 variable "db_name" { type=string; default="artispreneur" }
 variable "db_username" { type=string; default="artispreneur_admin"; sensitive=true }
+variable "hermes_key_name" { type=string; default="artispreneur-hermes" }
 variable "db_instance_class" { type=string; default="db.t4g.micro" }
 
 output "api_endpoint" { value=aws_apigatewayv2_api.main.api_endpoint }

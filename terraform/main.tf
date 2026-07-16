@@ -139,6 +139,52 @@ resource "aws_cloudfront_distribution" "main" {
   viewer_certificate { cloudfront_default_certificate=true }
 }
 
+# === Hermes Agent Infrastructure ===
+resource "aws_security_group" "hermes" {
+  name = "artispreneur-hermes"
+  vpc_id = aws_vpc.main.id
+  ingress { from_port = 8080; to_port = 8080; protocol = "tcp"; cidr_blocks = ["0.0.0.0/0"] }
+  ingress { from_port = 22; to_port = 22; protocol = "tcp"; cidr_blocks = ["0.0.0.0/0"] }
+  egress { from_port = 0; to_port = 0; protocol = "-1"; cidr_blocks = ["0.0.0.0/0"] }
+}
+
+resource "aws_iam_role" "hermes" {
+  name = "artispreneur-hermes-ec2"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{ Effect = "Allow"; Principal = { Service = "ec2.amazonaws.com" }; Action = "sts:AssumeRole" }]
+  })
+}
+
+resource "aws_iam_role_policy" "hermes_s3" {
+  name = "hermes-s3-access"
+  role = aws_iam_role.hermes.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{ Effect = "Allow"; Action = ["s3:GetObject","s3:PutObject"]; Resource = "${aws_s3_bucket.outputs.arn}/users/*" }]
+  })
+}
+
+resource "aws_iam_instance_profile" "hermes" {
+  name = "artispreneur-hermes-profile"
+  role = aws_iam_role.hermes.name
+}
+
+# Launch template for per-user Hermes instances
+resource "aws_launch_template" "hermes" {
+  name = "artispreneur-hermes"
+  image_id = "ami-0c55b159cbfafe1f0"
+  instance_type = "t3.micro"
+  key_name = var.hermes_key_name
+  iam_instance_profile { name = aws_iam_instance_profile.hermes.name }
+  vpc_security_group_ids = [aws_security_group.hermes.id]
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = { Product = "Artispreneur"; Role = "Hermes Agent" }
+  }
+}
+
 # === ElastiCache ===
 resource "aws_security_group" "redis" { name="artispreneur-redis"; vpc_id=aws_vpc.main.id
   ingress { from_port=6379; to_port=6379; protocol="tcp"; cidr_blocks=["10.0.0.0/16"] } }
