@@ -4,150 +4,163 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Pricing — Artispreneur</title>
-<meta name="description" content="Free with your own API key, or $9.99/month powered by us. Artist OS for the music business.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="description" content="Simple pricing for music artists. Free to start. Artist $12/mo, Pro $25/mo, Label $59/mo.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
 <style>
-:root{--bg:#09090b;--surface:#111113;--card:#18181b;--border:#252529;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#63636b;--gold:#c9a227;--gold-light:#e0b832;--gold-subtle:rgba(201,162,39,0.08);--accent-green:#22c55e}
+:root{--bg:#09090b;--surface:#111113;--card:#18181b;--border:#252529;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#63636b;--gold:#c9a227;--gold-light:#e0b832;--green:#22c55e}
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-font-smoothing:antialiased}
 body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 a{color:var(--gold);text-decoration:none}
-.container{max-width:1100px;margin:0 auto;padding:0 24px}
-.navbar{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;max-width:1200px;margin:0 auto}
-.navbar img{height:22px}
-.nav-links{display:flex;gap:24px;align-items:center}
-.nav-links a{color:var(--text-muted);font-size:13px;font-weight:500;transition:color .2s}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.navbar{position:sticky;top:0;z-index:100;background:rgba(9,9,11,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.navbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:14px 24px}
+.nav-logo{display:flex;align-items:center;gap:8px;font-family:'Playfair Display',serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.nav-logo img{height:22px}.nav-logo .gold{color:var(--gold)}
+.nav-links{display:flex;gap:14px;align-items:center;margin-left:auto}
+.nav-links a{color:var(--text-muted);font-size:13px;font-weight:500;transition:color .15s}
 .nav-links a:hover{color:var(--text)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:8px;font-weight:700;font-size:13px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
 .btn-gold{background:var(--gold);color:var(--bg)}.btn-gold:hover{background:var(--gold-light)}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--gold)}
-header{text-align:center;padding:60px 0 40px}
-header h1{font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,48px);font-weight:900;margin-bottom:8px}
-header p{font-size:16px;color:var(--text-muted);max-width:560px;margin:0 auto}
-.trust-banner{display:flex;justify-content:center;gap:32px;margin:32px 0;flex-wrap:wrap}
-.trust-item{text-align:center}.trust-item .num{font-size:24px;font-weight:800;color:var(--gold)}.trust-item .lbl{font-size:11px;color:var(--text-dim)}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:40px 0}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;transition:border .2s}
+header{text-align:center;padding:80px 0 48px}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,48px);font-weight:900;margin-bottom:8px}
+header p{font-size:16px;color:var(--text-muted);max-width:500px;margin:0 auto}
+.annual-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin:32px 0 40px}
+.annual-toggle span{font-size:13px;color:var(--text-muted)}
+.annual-toggle .save{font-size:10px;background:rgba(34,197,94,.15);color:var(--green);padding:2px 8px;border-radius:100px;font-weight:700}
+.toggle-switch{width:44px;height:24px;background:var(--border);border-radius:12px;cursor:pointer;position:relative;transition:background .2s}
+.toggle-switch.active{background:var(--gold)}
+.toggle-switch::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:2px;left:2px;transition:left .2s}
+.toggle-switch.active::after{left:22px}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:60px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px;position:relative;transition:all .2s}
 .card:hover{border-color:var(--gold)}
-.card.popular{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-subtle),var(--surface) 40%)}
-.card .popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);font-size:10px;font-weight:800;padding:3px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:.5px}
-.card h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:4px}
-.card .price{font-size:36px;font-weight:900;margin:12px 0}.card .price span{font-size:14px;font-weight:400;color:var(--text-dim)}
-.card .desc{font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.5}
-.card .desc .highlight{color:var(--accent-green);font-weight:600}
-.card ul{list-style:none;margin-bottom:24px}
-.card ul li{padding:7px 0;font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:8px}
-.card ul li::before{content:'✓';color:var(--accent-green);font-weight:700;font-size:12px}
-.card ul li.dim{color:var(--text-dim)}.card ul li.dim::before{content:'—';color:var(--text-dim)}
-.card .cta{display:block;width:100%;text-align:center;padding:12px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;border:1px solid var(--border);background:var(--card);color:var(--text);transition:all .15s;text-decoration:none}
-.card .cta-gold{background:var(--gold);color:var(--bg);border-color:var(--gold)}.card .cta-gold:hover{background:var(--gold-light)}
-.card .cta:hover:not(.cta-gold){border-color:var(--gold);color:var(--gold)}
-.faq{margin:60px 0;max-width:700px}
+.card.popular{border-color:var(--gold);background:linear-gradient(180deg,rgba(201,162,39,0.06),var(--surface) 50%)}
+.card .badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);font-size:10px;font-weight:800;padding:3px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:.5px}
+.card h3{font-size:17px;font-weight:700;margin-bottom:2px}
+.card .price{font-size:32px;font-weight:900;margin:8px 0}.card .price span{font-size:14px;font-weight:400;color:var(--text-dim)}
+.card .desc{font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.4}
+.card ul{list-style:none;margin-bottom:20px}
+.card ul li{padding:5px 0;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.card ul li::before{content:'✓';color:var(--green);font-weight:700;font-size:11px;flex-shrink:0}
+.card ul li.na{color:var(--text-dim)}.card ul li.na::before{content:'—';color:var(--text-dim)}
+.card .cta-btn{display:block;width:100%;text-align:center;padding:11px;border-radius:8px;font-weight:700;font-size:13px;transition:all .15s;font-family:'Inter',sans-serif;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.card .cta-btn.gold{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.card .cta-btn:hover:not(.gold){border-color:var(--gold)}
+.card .cta-btn.gold:hover{background:var(--gold-light)}
+.faq{max-width:700px;margin:0 auto 60px}
 .faq h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:20px}
-.faq-item{margin-bottom:16px}.faq-item h4{font-size:14px;font-weight:700;margin-bottom:4px}.faq-item p{font-size:13px;color:var(--text-muted);line-height:1.5}
-.footer{text-align:center;padding:40px 0;border-top:1px solid var(--border);margin-top:40px;font-size:12px;color:var(--text-dim)}
-@media(max-width:768px){.pricing-grid{grid-template-columns:1fr;max-width:400px;margin:20px auto}.nav-links{display:none}}
+.faq-item{margin-bottom:14px}.faq-item h4{font-size:13px;font-weight:700;margin-bottom:3px}.faq-item p{font-size:12px;color:var(--text-muted)}
+.finance{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:60px}
+.finance h3{font-size:15px;font-weight:700;margin-bottom:12px}.finance table{width:100%;font-size:12px}.finance th,.finance td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}.finance th{color:var(--text-dim);font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:.5px}.finance td{color:var(--text-muted)}
+.footer{text-align:center;padding:20px 0;font-size:12px;color:var(--text-dim);border-top:1px solid var(--border)}
+@media(max-width:900px){.pgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.pgrid{grid-template-columns:1fr;max-width:360px;margin:20px auto}}
 </style>
 </head>
 <body>
 
 <nav class="navbar">
   <div class="navbar-inner">
-    <a href="index.html" class="nav-logo"><img src="logo.png" alt="Artispreneur" style="height:22px;display:block"></a><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:800;letter-spacing:-.3px;margin-left:8px;color:var(--text)">Artis<span style="color:var(--gold)">preneur</span></span>
+    <a href="index.html" class="nav-logo"><img src="logo.png" alt="A"><span>Artis<span class="gold">preneur</span></span></a>
     <div class="nav-links">
-      <a href="workspace.html">Rostr Agent</a>
-      <a href="academy.html">Academy</a>
-      <a href="directory.html">Directory</a>
-      <a href="login.html">Login</a>
-      <a href="signup.html" class="nav-cta">Get Started Free</a>
+      <a href="workspace.html">Rostr Agent</a><a href="academy.html">Academy</a><a href="directory.html">Directory</a><a href="login.html">Login</a>
     </div>
   </div>
 </nav>
 
 <header class="container">
   <h1>Simple, transparent pricing</h1>
-  <p>Start free with your own API key, or let us power everything for $9.99/month.</p>
-  <div class="trust-banner">
-    <div class="trust-item"><div class="num">$0.05</div><div class="lbl">Cost per free user</div></div>
-    <div class="trust-item"><div class="num">97.6%</div><div class="lbl">Pro margin (we win when you win)</div></div>
-    <div class="trust-item"><div class="num">DeepSeek V3</div><div class="lbl">LLM — fastest, cheapest, best</div></div>
-  </div>
+  <p>Start free. Upgrade when you're ready. All plans include the Academy and Directory.</p>
 </header>
 
 <div class="container">
-  <div class="pricing-grid">
-    <!-- FREE -->
-    <div class="card">
-      <h3>Free</h3>
-      <div class="price">$0<span>/month</span></div>
-      <p class="desc"><span class="highlight">Bring your own API key</span> from Google AI, OpenAI, or Anthropic. You keep control — we provide the platform.</p>
-      <ul>
-        <li>Agent workspace dashboard</li>
-        <li>6 AI agents (your key)</li>
-        <li>Academy — 16 courses</li>
-        <li>Directory — 74+ contacts</li>
-        <li>Skill Builder</li>
-        <li>Unlimited chats (BYOK)</li>
-        <li class="dim">Powered agent chat</li>
-        <li class="dim">PDF generation</li>
-        <li class="dim">S3 storage</li>
-      </ul>
-      <a href="signup.html?plan=free" class="cta">Start Free →</a>
-    </div>
+  <div class="annual-toggle">
+    <span>Monthly</span>
+    <div class="toggle-switch" id="toggleSwitch" onclick="toggleAnnual()"></div>
+    <span>Annual <span class="save">Save 30%</span></span>
+  </div>
 
-    <!-- PRO -->
-    <div class="card popular">
-      <div class="popular-badge">Most Popular</div>
-      <h3>Pro</h3>
-      <div class="price">$9.99<span>/month</span></div>
-      <p class="desc"><span class="highlight">100 AI chats/month</span> powered by us. No keys, no setup — just results. Cancel anytime.</p>
-      <ul>
-        <li>Everything in Free</li>
-        <li>100 powered chats/month</li>
-        <li>5 custom skills/month</li>
-        <li>10 PDFs/month (EPK, contracts)</li>
-        <li>100MB S3 storage</li>
-        <li>All 6 agents (powered)</li>
-        <li>Email support</li>
-        <li class="dim">Unlimited chats</li>
-        <li class="dim">API access</li>
-      </ul>
-      <a href="signup.html?plan=pro" class="cta cta-gold">Start Pro →</a>
-    </div>
+  <div class="pgrid" id="pricingGrid"></div>
 
-    <!-- UNLIMITED -->
-    <div class="card">
-      <h3>Unlimited</h3>
-      <div class="price">$19.99<span>/month</span></div>
-      <p class="desc"><span class="highlight">Unlimited everything.</span> Power users, managers, labels — this is the full stack. Priority support included.</p>
-      <ul>
-        <li>Everything in Pro</li>
-        <li>Unlimited powered chats</li>
-        <li>Unlimited skills + PDFs</li>
-        <li>1GB S3 storage</li>
-        <li>Custom agent skills</li>
-        <li>API access</li>
-        <li>Priority support</li>
-        <li>Early features + beta access</li>
-      </ul>
-      <a href="signup.html?plan=unlimited" class="cta">Go Unlimited →</a>
-    </div>
+  <div class="finance" id="financeSummary">
+    <h3>📊 Finance Summary</h3>
+    <table>
+      <tr><th>Tier</th><th>Monthly</th><th>Annual</th><th>Revenue/user/yr</th><th>Cost/user/yr</th><th>Margin</th></tr>
+      <tr><td>Free</td><td>$0</td><td>$0</td><td>$0</td><td>$0.60</td><td>—</td></tr>
+      <tr><td>Artist</td><td>$12</td><td>$99</td><td>$99</td><td>$4.80</td><td>95.2%</td></tr>
+      <tr><td>Pro</td><td>$25</td><td>$199</td><td>$199</td><td>$12</td><td>94.0%</td></tr>
+      <tr><td>Label</td><td>$59</td><td>$499</td><td>$499</td><td>$50</td><td>90.0%</td></tr>
+    </table>
+    <p style="margin-top:12px;font-size:11px;color:var(--text-dim)">All payments processed via Stripe. Revenue deposited to artispreneur@gmail.com. DeepSeek V3 LLM costs: ~$0.0019/chat.</p>
   </div>
 
   <div class="faq">
-    <h3>Frequently Asked Questions</h3>
-    <div class="faq-item"><h4>What's a "powered chat"?</h4><p>A conversation with any of our 6 AI agents, powered by DeepSeek V3 through AWS Bedrock. Free users bring their own API key. Pro and Unlimited users get chats included.</p></div>
-    <div class="faq-item"><h4>Can I switch plans?</h4><p>Yes. Upgrade or downgrade anytime. Unused chats don't roll over, but you're never locked in.</p></div>
-    <div class="faq-item"><h4>What API keys work with BYOK?</h4><p>Google AI (Gemini), OpenAI, and Anthropic keys all work. We route through AWS for security — your key stays encrypted.</p></div>
-    <div class="faq-item"><h4>Is there a free trial?</h4><p>The Free plan IS the trial. BYOK gives you full access. Upgrade when you want us to power it for you.</p></div>
-    <div class="faq-item"><h4>What does "unlimited" really mean?</h4><p>No chat caps, no skill limits, no PDF limits. Fair use applies — we'll reach out before any throttling.</p></div>
+    <h3>FAQ</h3>
+    <div class="faq-item"><h4>What's a "powered chat"?</h4><p>Any conversation with our AI agents. Free users get 10/mo powered by us. Artist gets 200/mo. Pro and Label are unlimited.</p></div>
+    <div class="faq-item"><h4>Can I bring my own API key?</h4><p>Yes. Free tier supports BYOK from Google AI, OpenAI, and Anthropic. Unlimited chats with your own key, forever free.</p></div>
+    <div class="faq-item"><h4>Can I switch or cancel?</h4><p>Anytime. Upgrade, downgrade, or cancel. No contracts. Annual plans save 30% (~2 months free).</p></div>
+    <div class="faq-item"><h4>What's the Label plan?</h4><p>For managers, labels, and teams. 5 artist seats, shared knowledge base, white-label option, and custom agent configurations.</p></div>
   </div>
 </div>
 
-<div class="footer container">
-  <p>All LLMs routed through AWS Bedrock DeepSeek V3 for speed, cost, and reliability. Your data stays in us-east-1.</p>
-</div>
+<div class="footer">© 2026 Artispreneur · Stripe payments · artispreneur@gmail.com</div>
+
+<script>
+const STRIPE_KEY = "pk_live_51OsnXNAvsDppGi97KT3clP9wzIxCDDvCyFT4fTPSQr1Z1HOsFWBBDCDedQSxweKjtnq5UEyjpgLFkh1QTs5xJOH90031ubgtmZ";
+const PRICES = {
+  artist_month: "price_1Tty28AvsDppGi97L7rumUT2",
+  artist_year: "price_1Tty28AvsDppGi97WRtc3p5F",
+  pro_month: "price_1Tty29AvsDppGi97HqulM8mm",
+  pro_year: "price_1Tty29AvsDppGi97Qi5VM0A2",
+  label_month: "price_1Tty29AvsDppGi97YIoXmesV",
+  label_year: "price_1Tty2AAvsDppGi97ZlKUw3XC",
+};
+
+let isAnnual = false;
+const stripe = Stripe(STRIPE_KEY);
+
+function toggleAnnual() {
+  isAnnual = !isAnnual;
+  document.getElementById('toggleSwitch').classList.toggle('active', isAnnual);
+  renderPricing();
+}
+
+function checkout(priceId) {
+  stripe.redirectToCheckout({
+    lineItems: [{price: priceId, quantity: 1}],
+    mode: 'subscription',
+    successUrl: window.location.origin + '/success.html',
+    cancelUrl: window.location.origin + '/pricing.html',
+  }).then(r => { if (r.error) alert(r.error.message); });
+}
+
+function renderPricing() {
+  const tiers = [
+    {name:"Free",price:"$0",period:"/forever",desc:"Start building. BYOK or 10 free AI chats/month.",features:["Agent workspace dashboard","10 powered chats/month","Academy (16 courses)","Directory (74 contacts)","BYOK support","Community access"],na:["Unlimited chats","PDF generation","S3 storage","API access"],cta:"Start Free",href:"signup.html",popular:false},
+    {name:"Artist",price:isAnnual?"$99":"$12",period:isAnnual?"/year":"/month",desc:"The sweet spot. 200 AI chats/month + all features.",features:["Everything in Free","200 powered chats/month","20 skills/month","50 PDFs/month","1GB S3 storage","Email support"],na:["API access","Custom agents"],cta:"Subscribe",priceId:isAnnual?PRICES.artist_year:PRICES.artist_month,popular:true},
+    {name:"Pro",price:isAnnual?"$199":"$25",period:isAnnual?"/year":"/month",desc:"Unlimited everything. For serious artists.",features:["Everything in Artist","Unlimited powered chats","Unlimited skills + PDFs","5GB S3 storage","API access","Priority support"],na:["White-label"],cta:"Subscribe",priceId:isAnnual?PRICES.pro_year:PRICES.pro_month,popular:false},
+    {name:"Label",price:isAnnual?"$499":"$59",period:isAnnual?"/year":"/month",desc:"For managers, labels, and teams.",features:["Everything in Pro","5 artist seats","Shared knowledge base","White-label option","Custom agent configs","Dedicated support"],na:[],cta:"Subscribe",priceId:isAnnual?PRICES.label_year:PRICES.label_month,popular:false},
+  ];
+
+  document.getElementById('pricingGrid').innerHTML = tiers.map(t => `
+    <div class="card${t.popular?' popular':''}">
+      ${t.popular?'<div class="badge">Most Popular</div>':''}
+      <h3>${t.name}</h3>
+      <div class="price">${t.price}<span>${t.period}</span></div>
+      <div class="desc">${t.desc}</div>
+      <ul>
+        ${t.features.map(f => `<li>${f}</li>`).join('')}
+        ${t.na.map(n => `<li class="na">${n}</li>`).join('')}
+      </ul>
+      ${t.href ? `<a href="${t.href}" class="cta-btn${t.popular?' gold':''}">${t.cta}</a>` : `<button class="cta-btn${t.popular?' gold':''}" onclick="checkout('${t.priceId}')">${t.cta}</button>`}
+    </div>
+  `).join('');
+}
+
+renderPricing();
+</script>
 </body>
 </html>
