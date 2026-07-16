@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Artispreneur — Investment One-Pager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090b;--surface:#111113;--gold:#c9a227;--text:#fafafa;--text-muted:#a1a1aa;--text-dim:#63636b;--border:#252529}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;color:var(--text);line-height:1.5;max-width:900px;margin:0 auto;padding:40px 24px}
+a{color:var(--gold);text-decoration:none}
+.header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:28px}
+.header .brand{font-family:'Playfair Display',serif;font-size:22px;font-weight:900}
+.header .brand .gold{color:var(--gold)}
+.header .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);background:var(--surface);padding:4px 12px;border-radius:4px;border:1px solid var(--border)}
+h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;margin-bottom:6px}
+.tagline{font-size:16px;color:var(--text-muted);margin-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px}
+.box h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:8px}
+.box p,.box li{font-size:12px;color:var(--text-muted);line-height:1.6}
+.box ul{padding-left:14px}.box li{margin-bottom:3px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.metric .val{font-size:24px;font-weight:900;color:var(--gold)}.metric .lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-top:2px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.full{grid-column:1/-1}
+.footer{text-align:center;padding:24px 0;font-size:11px;color:var(--text-dim);border-top:1px solid var(--border);margin-top:28px}
+@media(max-width:600px){.grid,.two-col,.metrics{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">Artis<span class="gold">preneur</span></div>
+  <div class="label">Investment One-Pager · July 2026</div>
+</div>
+
+<h1>The Operating System for Independent Artists</h1>
+<p class="tagline">7 AI agents. 37 tools. One platform. We replace what a record label does — for $12/month.</p>
+
+<div class="metrics">
+  <div class="metric"><div class="val">$0.0019</div><div class="lbl">Cost per AI Chat</div></div>
+  <div class="metric"><div class="val">95%</div><div class="lbl">Gross Margins</div></div>
+  <div class="metric"><div class="val">$12</div><div class="lbl">Core Price Point</div></div>
+  <div class="metric"><div class="val">~200M</div><div class="lbl">Addressable Artists</div></div>
+</div>
+
+<div class="grid">
+  <div class="box">
+    <h3>The Problem</h3>
+    <p>Independent artists lose billions in unclaimed royalties, miss sync licensing opportunities, and struggle with business operations. Labels take 50-85% of revenue. Most artists can't afford managers, lawyers, or accountants.</p>
+  </div>
+  <div class="box">
+    <h3>Our Solution</h3>
+    <p>Artispreneur gives every artist an AI-powered back office. 7 specialized agents handle PRO registration, distribution, licensing, legal, finance, and strategy — through a simple chat interface. Pay $12/month or bring your own API key for free.</p>
+  </div>
+
+  <div class="box">
+    <h3>Product</h3>
+    <ul>
+      <li><strong>Rostr Agent</strong> — 7 AI agents, 37 tools. Deployed at rostragent.com</li>
+      <li><strong>Academy</strong> — 16 courses, 307 modules. Free.</li>
+      <li><strong>Directory</strong> — 74+ curated industry contacts.</li>
+      <li><strong>Skill Builder</strong> — Custom agents + PDF generation.</li>
+      <li><strong>Onboarding Wizard</strong> — 5-step PAL compiler builds artist profile.</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3>Traction</h3>
+    <ul>
+      <li>✅ Product deployed — rostragent.com, 23 HTML pages</li>
+      <li>✅ 26 Python backend modules, 0 errors</li>
+      <li>✅ Stripe payments live — Free/Artist($12)/Pro($25)/Label($59)</li>
+      <li>✅ AWS infrastructure — Terraform, Cognito, RDS, Lambda, Bedrock</li>
+      <li>✅ Hermes Agent provisioning per user (Nous Research)</li>
+      <li>✅ ROSTR PAL compiler integrated</li>
+      <li>⏳ Pre-revenue — launching to first users</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h3>Business Model</h3>
+    <p><strong>Freemium + Subscription.</strong> Free tier with BYOK drives adoption. Artist tier ($12/mo) is 95% margin. Pro ($25/mo) and Label ($59/mo) for power users. Annual plans save 30%. All LLM costs through DeepSeek V3 at $0.0019/chat.</p>
+  </div>
+  <div class="box">
+    <h3>Market</h3>
+    <p>~200M independent artists globally. Music tech market: $12B growing at 17% CAGR. Adjacent: creator economy ($100B), AI agents ($47B by 2030). We sit at the intersection of all three.</p>
+  </div>
+
+  <div class="box">
+    <h3>Tech Stack</h3>
+    <p>AWS (Cognito, RDS, S3, Lambda, Bedrock DeepSeek V3, EC2) · Vercel · Terraform · Python/FastAPI · Stripe · Hermes Agent · ROSTR Framework · Resemble AI (voice)</p>
+  </div>
+  <div class="box">
+    <h3>Team</h3>
+    <p><strong>Patrick Diamitani</strong> — Founder. Built the entire platform end-to-end. Product, engineering, design, and infra.</p>
+    <p style="margin-top:6px"><strong>Contact:</strong> artispreneur@gmail.com</p>
+  </div>
+
+  <div class="box full">
+    <h3>The Ask</h3>
+    <p style="font-size:14px"><strong>Seeking $250K pre-seed</strong> for: user acquisition, AWS production infra, content marketing, and first hire (growth). 18-month runway at $14K/month burn. Targeting 1,000 paid users by month 12.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Artispreneur · artispreneur@gmail.com · rostragent.com · github.com/diamitani/artispreneur-v217</p>
+  <p style="margin-top:4px">Confidential · For Nobody Studios · July 2026</p>
+</div>
+
+</body>
+</html>
