@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Artispreneur — Your AI Agent for the Music Business</title>
+<link rel="icon" href="/logo.png">
 <meta name="description" content="Artispreneur gives musicians an AI agent workspace that handles PROs, distribution, licensing, legal, finance, and management. Sign up free.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,6 +65,8 @@ section{padding:80px 0}
 .section-header.centered .section-sub{margin:0 auto}
 
 .agents-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.agent-family-label{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin:20px 0 -4px;padding-top:16px;border-top:1px solid var(--border)}
+.agent-family-label:first-child{margin-top:0;padding-top:0;border-top:none}
 .agent-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .2s}
 .agent-card:hover{border-color:var(--border-light);transform:translateY(-2px)}
 .agent-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
@@ -103,7 +106,7 @@ footer{background:var(--card);border-top:1px solid var(--border);padding:48px 0 
 </head>
 <body>
 
-<nav class="navbar">
+<nav class="navbar" id="navbar">
   <div class="navbar-inner">
     <a href="index.html" class="nav-logo"><img src="logo.png" alt="Artispreneur" style="height:22px;display:block"></a><span style="font-family:'Playfair Display',serif;font-size:15px;font-weight:800;letter-spacing:-.3px;margin-left:8px;color:var(--text)">Artis<span style="color:var(--gold)">preneur</span></span>
     <div class="nav-links">
@@ -126,7 +129,7 @@ footer{background:var(--card);border-top:1px solid var(--border);padding:48px 0 
       <a href="#agents" class="btn btn-outline">See the Agents</a>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="n">6</div><div class="l">AI Agents</div></div>
+      <div class="hero-stat"><div class="n">11</div><div class="l">AI Agents</div></div>
       <div class="hero-stat"><div class="n">16</div><div class="l">Courses</div></div>
       <div class="hero-stat"><div class="n">$0</div><div class="l">To Start</div></div>
     </div>
@@ -136,7 +139,7 @@ footer{background:var(--card);border-top:1px solid var(--border);padding:48px 0 
       <div class="chat-header">
         <div class="chat-dot g"></div><div class="chat-dot d"></div><div class="chat-dot d"></div>
         <span class="chat-title">Artispreneur OS</span>
-        <span class="chat-badge">Live Demo</span>
+        <span class="chat-badge">Demo</span>
       </div>
       <div class="chat-body" id="chatBody">
         <div class="chat-msg agent">👋 Hey! I'm your Artispreneur agent.<br><br>I can help you with:<br>• Registering songs with your PRO<br>• Distribution strategy<br>• Music licensing opportunities<br>• Setting up your LLC<br>• Business taxes & finance<br>• Building your brand<br><br>What do you want to work on?</div>
@@ -154,16 +157,30 @@ footer{background:var(--card);border-top:1px solid var(--border);padding:48px 0 
   <div class="container">
     <div class="section-header centered">
       <div class="section-label">Your AI Team</div>
-      <h2 class="section-title">Six Specialized Agents</h2>
-      <p class="section-sub">Each agent handles a core function — the same roles a major label fills, now working for you 24/7.</p>
+      <h2 class="section-title">11 Agents. 5 Product Families.</h2>
+      <p class="section-sub">Each agent handles a core function — the same roles a major label fills, now working for you 24/7 inside your workspace.</p>
     </div>
     <div class="agents-grid">
-      <div class="agent-card"><h3>♩ PRO Agent</h3><p>Register with BMI/ASCAP, manage your catalog, track royalties, create splitsheets.</p></div>
-      <div class="agent-card"><h3>↗ Distribution Agent</h3><p>Manage DSP accounts, build playlisting strategies, run ad campaigns for your music.</p></div>
-      <div class="agent-card"><h3>⚡ Licensing Agent</h3><p>Find sync opportunities, submit to music libraries, pitch to supervisors.</p></div>
-      <div class="agent-card"><h3>§ Legal Agent</h3><p>EIN registration, LLC/C-Corp setup, contract templates, operating agreements.</p></div>
-      <div class="agent-card"><h3>$ Finance Agent</h3><p>Business banking, transaction analysis, tax management, quarterly estimates.</p></div>
+      <div class="agent-family-label">Artispreneur Workspace</div>
       <div class="agent-card"><h3>◎ Manager Agent</h3><p>Business plans, calendar, projects, content creation, research, and strategy.</p></div>
+      <div class="agent-card"><h3>◎ ROSTR PAL</h3><p>Compiles your onboarding answers into soul.md, a bio, and a 30-day plan.</p></div>
+
+      <div class="agent-family-label">Pro Toolkit</div>
+      <div class="agent-card"><h3>§ Legal Agent</h3><p>EIN registration, LLC/C-Corp setup, contract templates, operating agreements.</p></div>
+      <div class="agent-card"><h3>🏢 Business Agent</h3><p>Business-structure education, EIN checklist, contractor docs, state requirements.</p></div>
+      <div class="agent-card"><h3>$ Finance Agent</h3><p>Business banking, transaction analysis, tax management, quarterly estimates.</p></div>
+
+      <div class="agent-family-label">Directory & Outreach</div>
+      <div class="agent-card"><h3>📣 Outreach Agent</h3><p>Personalized pitches to blogs, playlists, radio, and venues — with CRM tracking.</p></div>
+      <div class="agent-card"><h3>↗ Distribution Agent</h3><p>Manage DSP accounts, build playlisting strategies, run ad campaigns for your music.</p></div>
+
+      <div class="agent-family-label">Academy</div>
+      <div class="agent-card"><h3>🎓 Tutor Agent</h3><p>Guides you through the Academy, turns lessons into projects, keeps you accountable.</p></div>
+
+      <div class="agent-family-label">Cataba</div>
+      <div class="agent-card"><h3>🎵 Catalog Agent</h3><p>Publishing, ISRC/UPC tracking, splitsheets, and discography management.</p></div>
+      <div class="agent-card"><h3>♩ PRO Agent</h3><p>Register with BMI/ASCAP, manage your catalog, track royalties, create splitsheets.</p></div>
+      <div class="agent-card"><h3>⚡ Licensing Agent</h3><p>Find sync opportunities, submit to music libraries, pitch to supervisors.</p></div>
     </div>
   </div>
 </section>
@@ -176,7 +193,7 @@ footer{background:var(--card);border-top:1px solid var(--border);padding:48px 0 
     </div>
     <div class="tools-grid">
       <a href="academy.html" class="tool-chip">🎓 Academy — 16 courses, 307 modules</a>
-      <a href="directory.html" class="tool-chip">◉ Directory — 183 industry contacts</a>
+      <a href="directory.html" class="tool-chip">◉ Directory — 74 industry contacts</a>
       <a href="workspace.html" class="tool-chip">◈ Workspace — Agent dashboard</a>
       <a href="pricing.html" class="tool-chip">✦ Prompt Library — Artist workflows</a>
       <div class="tool-chip">⚙ Skills Marketplace</div>
@@ -191,48 +208,10 @@ footer{background:var(--card);border-top:1px solid var(--border);padding:48px 0 
   <div class="container">
     <div class="section-header centered">
       <div class="section-label">Pricing</div>
-      <h2 class="section-title">Start Free. Bring Your Own Key.</h2>
-      <p class="section-sub">No credit card. Sign up, get your agent workspace provisioned instantly.</p>
-    </div>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <h3>Free</h3>
-        <div class="price">$0<span>/forever</span></div>
-        <p class="desc">Gemini Flash credits included. All 6 agents, academy, directory.</p>
-        <ul>
-          <li>All 6 AI agents</li>
-          <li>Gemini API credits</li>
-          <li>500 messages/month</li>
-          <li>16 courses · 307 modules</li>
-          <li>183 contact directory</li>
-        </ul>
-        <a href="signup.html?plan=free" class="btn btn-outline" style="display:block;text-align:center">Start Free</a>
-      </div>
-      <div class="price-card featured">
-        <h3>BYOK</h3>
-        <div class="price">$0<span> + your key</span></div>
-        <p class="desc">Connect OpenAI, Anthropic, Groq, or Ollama. Unlimited usage.</p>
-        <ul>
-          <li>Everything in Free</li>
-          <li>Unlimited messages</li>
-          <li>Google Drive sync</li>
-          <li>Signal/Wire messaging</li>
-          <li>Any LLM provider</li>
-        </ul>
-        <a href="signup.html?plan=byok" class="btn btn-gold" style="display:block;text-align:center">Start with BYOK</a>
-      </div>
-      <div class="price-card">
-        <h3>Pro</h3>
-        <div class="price">$29<span>/month</span></div>
-        <p class="desc">Managed compute. Dedicated agent instance. Priority support.</p>
-        <ul>
-          <li>Everything in BYOK</li>
-          <li>Managed LLM compute</li>
-          <li>Dedicated agent instance</li>
-          <li>Priority support</li>
-          <li>Team collaboration</li>
-        </ul>
-        <a href="signup.html?plan=pro" class="btn btn-outline" style="display:block;text-align:center">Go Pro</a>
+      <h2 class="section-title">Start Free. Upgrade When You're Ready.</h2>
+      <p class="section-sub">No credit card required. Sign up and your agent workspace is provisioned instantly.</p>
+      <div style="text-align:center;margin-top:28px">
+        <a href="pricing.html" class="btn btn-gold" style="font-size:15px;padding:14px 32px">See Full Pricing →</a>
       </div>
     </div>
   </div>
@@ -281,36 +260,76 @@ const responses = {
   'default': "I can help with all of this:\n\n🎵 Register with a PRO (BMI/ASCAP/SESAC)\n📀 Distribute to streaming platforms\n🎬 License music for TV, film, games\n⚖️ Set up your LLC and business contracts\n💰 Manage taxes and finances\n📣 Build promotion strategies\n\nWhat would you like to work on first?"
 };
 
+// Soft, client-side daily cap on real LLM calls for the free demo widget (no backend
+// database yet — see api/chat.js comments). Once hit, falls back to static replies.
+const DEMO_DAILY_LIMIT = 15;
+function demoCallsLeftToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  const key = 'artispreneur_demo_chat_' + today;
+  return { key, used: parseInt(localStorage.getItem(key) || '0', 10) };
+}
+function recordDemoCall(key, used) { localStorage.setItem(key, String(used + 1)); }
+
+let chatHistory = [];
+
+async function callChatAPI(message) {
+  const r = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ message, history: chatHistory, surface: 'homepage' }),
+  });
+  if (!r.ok) throw new Error('chat_api_' + r.status);
+  const data = await r.json();
+  if (!data.reply) throw new Error('chat_api_empty');
+  return data.reply;
+}
+
+function staticFallback(msg) {
+  const low = msg.toLowerCase();
+  for (const [key, val] of Object.entries(responses)) {
+    if (key !== 'default' && low.includes(key)) return val;
+  }
+  return responses.default;
+}
+
 function sendChat() {
   const input = document.getElementById('chatInput');
   const body = document.getElementById('chatBody');
   const typing = document.getElementById('chatTyping');
   const msg = input.value.trim();
   if (!msg) return;
-  
+
   body.innerHTML += `<div class="chat-msg user">${msg}</div>`;
   input.value = '';
   typing.style.display = 'block';
   body.scrollTop = body.scrollHeight;
-  
-  setTimeout(() => {
+
+  const { key, used } = demoCallsLeftToday();
+  const useApi = used < DEMO_DAILY_LIMIT;
+  const respond = (resp) => {
     typing.style.display = 'none';
-    const low = msg.toLowerCase();
-    let resp = responses.default;
-    for (const [key, val] of Object.entries(responses)) {
-      if (key !== 'default' && low.includes(key)) { resp = val; break; }
-    }
     body.innerHTML += `<div class="chat-msg agent">${resp.replace(/\n/g,'<br>')}</div>`;
     body.scrollTop = body.scrollHeight;
-    
-    // After 3 messages, show CTA
     if (body.querySelectorAll('.chat-msg.user').length >= 3) {
       setTimeout(() => {
         body.innerHTML += `<div class="chat-msg agent">Ready to get started for real? <a href="signup.html" style="color:var(--gold);font-weight:700">Create your free workspace →</a></div>`;
         body.scrollTop = body.scrollHeight;
       }, 2000);
     }
-  }, 1500);
+  };
+
+  if (useApi) {
+    callChatAPI(msg).then(reply => {
+      recordDemoCall(key, used);
+      chatHistory.push({ role: 'user', text: msg }, { role: 'assistant', text: reply });
+      respond(reply);
+    }).catch(() => {
+      // API not configured / failed — degrade to the static keyword demo, no error shown to user
+      setTimeout(() => respond(staticFallback(msg)), 900);
+    });
+  } else {
+    setTimeout(() => respond(staticFallback(msg) + "\n\n(Demo reply — you've hit today's live-AI preview limit. Sign up for unlimited.)"), 900);
+  }
 }
 </script>
 </body>
