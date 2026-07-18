@@ -78,6 +78,14 @@ class AgentRegistry:
             return 'finance'
         if any(w in m for w in ['compile','rostr','pal','manifest','soul','build package']):
             return 'rostr'
+        if any(w in m for w in ['outreach','pitch','contact','campaign','blog','playlist submit','radio']):
+            return 'outreach'
+        if any(w in m for w in ['tutor','learn','course','academy','explain','teach']):
+            return 'tutor'
+        if any(w in m for w in ['catalog','publish','isrc','track list','discography','upload']):
+            return 'catalog'
+        if any(w in m for w in ['business','llc form','ein','incorporat','formation','checklist']):
+            return 'business'
         return 'manager'
     
     def all_agents(self) -> list[dict]:

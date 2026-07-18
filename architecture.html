@@ -5,96 +5,116 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Architecture — Artispreneur</title>
 <style>
-:root{--bg:#09090b;--surface:#111113;--card:#18181b;--border:#252529;--text:#fafafa;--text-dim:#63636b;--gold:#c9a227;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--cyan:#06b6d2;--orange:#f97316}
+:root{--bg:#09090b;--surf:#111113;--card:#18181b;--border:#252529;--text:#fafafa;--muted:#a1a1aa;--dim:#63636b;--gold:#c9a227}
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-font-smoothing:antialiased}
-body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:40px 24px}
-.container{max-width:1100px;margin:0 auto}
-h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;text-align:center;margin-bottom:8px}
-.sub{text-align:center;font-size:14px;color:var(--text-dim);margin-bottom:40px}
-.arch{display:grid;gap:12px}
-.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;transition:all .15s}
-.box:hover{border-color:var(--gold)}
-.box .icon{font-size:22px;margin-bottom:6px}
-.box .label{font-size:12px;font-weight:700;margin-bottom:2px}
-.box .sublabel{font-size:10px;color:var(--text-dim)}
-.box.gold{border-color:var(--gold);background:linear-gradient(180deg,rgba(201,162,39,0.06),var(--surface))}
-.section{margin:32px 0}
-.section h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin:16px 0}
-.flow-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:12px;font-weight:600}
-.flow-arrow{color:var(--gold);font-size:16px}
-.agents-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
-.agent-box{border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border)}
-.agent-box .icon{font-size:20px}.agent-box .name{font-size:12px;font-weight:700;margin:4px 0}.agent-box .tools{font-size:10px;color:var(--text-dim)}
-.agent-box.pro{border-color:rgba(201,162,39,.3)}.agent-box.dist{border-color:rgba(34,197,94,.3)}.agent-box.lic{border-color:rgba(168,85,247,.3)}.agent-box.legal{border-color:rgba(59,130,246,.3)}.agent-box.fin{border-color:rgba(6,182,210,.3)}.agent-box.mgr{border-color:rgba(249,115,22,.3)}.agent-box.rostr{border-color:var(--gold);background:rgba(201,162,39,0.04)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:32px 20px}
+.container{max-width:1200px;margin:0 auto}
+h1{font-family:'Playfair Display',serif;font-size:clamp(24px,3vw,36px);font-weight:900;text-align:center;margin-bottom:6px}
+.sub{text-align:center;font-size:14px;color:var(--muted);margin-bottom:32px}
+.section{margin:36px 0}
+.section h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+.flow-box{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:12px;font-weight:600;text-align:center;min-width:100px}
+.flow-box .icon{font-size:18px;display:block;margin-bottom:4px}
+.flow-arrow{color:var(--gold);font-size:18px;font-weight:700}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.prod{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:20px}
+.prod .icon{font-size:22px;margin-bottom:8px}.prod h4{font-size:14px;font-weight:700;margin-bottom:4px}.prod .free{font-size:11px;color:var(--dim);margin-bottom:6px}.prod .paid{font-size:11px;color:var(--gold);font-weight:600}.prod p{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+.agents{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.agent{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}.agent .icon{font-size:20px}.agent .name{font-size:12px;font-weight:700;margin:4px 0}.agent .tools{font-size:10px;color:var(--dim)}.agent.core{border-color:var(--gold);background:rgba(201,162,39,0.03)}
+.infra{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.infra-box{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}.infra-box .icon{font-size:22px}.infra-box .lbl{font-size:11px;font-weight:700;margin:4px 0}.infra-box .sub{font-size:9px;color:var(--dim)}
+.pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.stage{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}.stage .num{width:28px;height:28px;border-radius:50%;background:rgba(201,162,39,0.1);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-weight:800;font-size:13px;color:var(--gold)}.stage h4{font-size:12px;font-weight:700}.stage p{font-size:10px;color:var(--dim);line-height:1.4;margin-top:4px}
+.footer{text-align:center;padding:20px;font-size:11px;color:var(--dim);border-top:1px solid var(--border);margin-top:40px}
 a{color:var(--gold);text-decoration:none}
-.footer{text-align:center;padding:20px 0;font-size:12px;color:var(--text-dim)}
-@media(max-width:600px){.row{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.pipeline{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>Artispreneur System Architecture</h1>
-  <p class="sub">ROSTR PAL Compiler → 7 Agents → AWS Backend → Vercel Frontend</p>
+  <h1>Artispreneur — Full System Architecture</h1>
+  <p class="sub">One modular platform. Five product families. Unified signup → PAL → Soul.md → Workspace → Agent Dashboard.</p>
 
-  <div class="section"><h3>User Flow</h3>
+  <!-- UNIFIED SIGNUP FLOW -->
+  <div class="section"><h3>Unified Signup & Provisioning Flow</h3>
     <div class="flow">
-      <div class="flow-item">🌐 rostragent.com</div><span class="flow-arrow">→</span>
-      <div class="flow-item">✍️ Signup (5-step)</div><span class="flow-arrow">→</span>
-      <div class="flow-item">◎ ROSTR PAL Compiles</div><span class="flow-arrow">→</span>
-      <div class="flow-item">◈ Workspace</div><span class="flow-arrow">→</span>
-      <div class="flow-item">💬 Agent Chat</div>
+      <div class="flow-box"><span class="icon">✍️</span>Sign Up</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">📋</span>Onboarding (PAL)</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">◎</span>ROSTR Compiles Soul.md</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">⚡</span>Provision Workspace</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">🔧</span>Install Tools (Composio)</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">🏠</span>Agent Dashboard</div>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:8px">Every product family uses the same flow. PAL questionnaire is product-specific. Shared multi-tenant Hermes runtime.</p>
+  </div>
+
+  <!-- FIVE PRODUCT FAMILIES -->
+  <div class="section"><h3>Five Product Families</h3>
+    <div class="products">
+      <div class="prod"><div class="icon">📄</div><h4>Pro Toolkit</h4><div class="free">Free: Templates + EPK preview</div><div class="paid">Paid: Contract Agent + EPK Builder</div><p>Business documents & professional artist presentation</p></div>
+      <div class="prod"><div class="icon">◉</div><h4>Directory &amp; Outreach</h4><div class="free">Free: Search, save, limited campaigns</div><div class="paid">Paid: Outreach Agent + CRM + downloads</div><p>Targeted pitching to blogs, playlists, radio, venues</p></div>
+      <div class="prod"><div class="icon">🎓</div><h4>Academy</h4><div class="free">Free: Courses, resources, starter Tutor</div><div class="paid">Paid: Full Tutor Agent + projects + accountability</div><p>Artists learn and execute rather than only consume</p></div>
+      <div class="prod"><div class="icon">◎</div><h4>Artispreneur Core</h4><div class="free">Free: PAL questionnaire, starter agent</div><div class="paid">Paid: Master Agent + specialist skills + workspace</div><p>Day-to-day AI business management</p></div>
+      <div class="prod"><div class="icon">🎵</div><h4>Cataba Publishing</h4><div class="free">Free: Upload tracks, build catalog</div><div class="paid">Paid: Publishing Agent (splitsheets, ISRC, royalties)</div><p>Master catalog + publishing administration</p></div>
     </div>
   </div>
 
-  <div class="section"><h3>7 AI Agents (37 tools)</h3>
-    <div class="agents-grid">
-      <div class="agent-box rostr"><div class="icon">◎</div><div class="name">ROSTR PAL</div><div class="tools">5 tools · Compiler</div></div>
-      <div class="agent-box mgr"><div class="icon">◎</div><div class="name">Manager</div><div class="tools">7 tools · Orchestrator</div></div>
-      <div class="agent-box pro"><div class="icon">♩</div><div class="name">PRO Agent</div><div class="tools">5 tools · Royalties</div></div>
-      <div class="agent-box dist"><div class="icon">↗</div><div class="name">Distribution</div><div class="tools">5 tools · Playlists</div></div>
-      <div class="agent-box lic"><div class="icon">⚡</div><div class="name">Licensing</div><div class="tools">4 tools · Sync</div></div>
-      <div class="agent-box legal"><div class="icon">§</div><div class="name">Legal</div><div class="tools">5 tools · Contracts</div></div>
-      <div class="agent-box fin"><div class="icon">$</div><div class="name">Finance</div><div class="tools">5 tools · Taxes</div></div>
+  <!-- PAL PIPELINE -->
+  <div class="section"><h3>ROSTR PAL Pipeline (5 Stages)</h3>
+    <div class="pipeline">
+      <div class="stage"><div class="num">1</div><h4>EXTRACT</h4><p>Intent, domain, subject, constraints from onboarding</p></div>
+      <div class="stage"><div class="num">2</div><h4>INJECT</h4><p>Context: project state, conventions, prior decisions</p></div>
+      <div class="stage"><div class="num">3</div><h4>ENHANCE</h4><p>Expand verbs, add precision, decompose goals</p></div>
+      <div class="stage"><div class="num">4</div><h4>COMPILE</h4><p>Agent manifests, tool registries, runtime configs</p></div>
+      <div class="stage"><div class="num">5</div><h4>ROUTE</h4><p>Allocate to specialist agents, set completion criteria</p></div>
     </div>
   </div>
 
-  <div class="section"><h3>AWS Backend</h3>
-    <div class="row">
-      <div class="box"><div class="icon">🔐</div><div class="label">Cognito</div><div class="sublabel">User Auth</div></div>
-      <div class="box"><div class="icon">🗄</div><div class="label">RDS PostgreSQL</div><div class="sublabel">User Data</div></div>
-      <div class="box"><div class="icon">📦</div><div class="label">S3</div><div class="sublabel">Outputs + Assets</div></div>
-      <div class="box"><div class="icon">⚡</div><div class="label">Lambda</div><div class="sublabel">FastAPI Backend</div></div>
-      <div class="box gold"><div class="icon">🧠</div><div class="label">Bedrock DeepSeek V3</div><div class="sublabel">LLM Routing</div></div>
-      <div class="box"><div class="icon">🌐</div><div class="label">CloudFront + API GW</div><div class="sublabel">CDN + API</div></div>
-      <div class="box"><div class="icon">⚡</div><div class="label">ElastiCache Redis</div><div class="sublabel">Sessions</div></div>
-      <div class="box"><div class="icon">🤖</div><div class="label">EC2 Hermes Agent</div><div class="sublabel">Per-User Instance</div></div>
+  <!-- ALL AGENTS -->
+  <div class="section"><h3>Agent Architecture (11 Agents, 52+ Tools)</h3>
+    <div class="agents">
+      <div class="agent core"><div class="icon">◎</div><div class="name">ROSTR PAL</div><div class="tools">5 tools · Compiler</div></div>
+      <div class="agent core"><div class="icon">◎</div><div class="name">Manager</div><div class="tools">7 tools · Orchestrator</div></div>
+      <div class="agent"><div class="icon">♩</div><div class="name">PRO Agent</div><div class="tools">5 tools · Royalties</div></div>
+      <div class="agent"><div class="icon">↗</div><div class="name">Distribution</div><div class="tools">5 tools · Playlists</div></div>
+      <div class="agent"><div class="icon">⚡</div><div class="name">Licensing</div><div class="tools">4 tools · Sync</div></div>
+      <div class="agent"><div class="icon">§</div><div class="name">Legal</div><div class="tools">5 tools · Contracts</div></div>
+      <div class="agent"><div class="icon">$</div><div class="name">Finance</div><div class="tools">5 tools · Taxes</div></div>
+      <div class="agent"><div class="icon">📄</div><div class="name">Contract</div><div class="tools">4 tools · Docs</div></div>
+      <div class="agent"><div class="icon">📣</div><div class="name">Outreach</div><div class="tools">4 tools · Pitches</div></div>
+      <div class="agent"><div class="icon">🎓</div><div class="name">Tutor</div><div class="tools">4 tools · Academy</div></div>
+      <div class="agent"><div class="icon">🎵</div><div class="name">Catalog</div><div class="tools">4 tools · Publishing</div></div>
     </div>
   </div>
 
-  <div class="section"><h3>Frontend (22 pages)</h3>
-    <div class="row">
-      <div class="box gold"><div class="label">Landing + Chat</div></div>
-      <div class="box"><div class="label">Signup Wizard</div></div>
-      <div class="box"><div class="label">Rostr Agent WS</div></div>
-      <div class="box"><div class="label">Skill Builder</div></div>
-      <div class="box"><div class="label">Academy (16 courses)</div></div>
-      <div class="box"><div class="label">Directory (74 contacts)</div></div>
+  <!-- INFRASTRUCTURE -->
+  <div class="section"><h3>AWS Infrastructure</h3>
+    <div class="infra">
+      <div class="infra-box"><div class="icon">🔐</div><div class="lbl">Cognito</div><div class="sub">User Auth</div></div>
+      <div class="infra-box"><div class="icon">🗄</div><div class="lbl">RDS PostgreSQL</div><div class="sub">Users + Workspaces</div></div>
+      <div class="infra-box"><div class="icon">📦</div><div class="lbl">S3</div><div class="sub">Outputs + Assets</div></div>
+      <div class="infra-box"><div class="icon">⚡</div><div class="lbl">Lambda</div><div class="sub">FastAPI Backend</div></div>
+      <div class="infra-box"><div class="icon">🧠</div><div class="lbl">Bedrock DeepSeek V3</div><div class="sub">LLM Routing</div></div>
+      <div class="infra-box"><div class="icon">🤖</div><div class="lbl">Hermes Runtime</div><div class="sub">Multi-tenant · Namespaced</div></div>
+      <div class="infra-box"><div class="icon">🔧</div><div class="lbl">Composio</div><div class="sub">Tool Integrations</div></div>
+      <div class="infra-box"><div class="icon">💳</div><div class="lbl">Stripe</div><div class="sub">Payments + Billing</div></div>
+      <div class="infra-box"><div class="icon">🌐</div><div class="lbl">Vercel + CloudFront</div><div class="sub">Frontend + CDN</div></div>
+      <div class="infra-box"><div class="icon">🎙</div><div class="lbl">Resemble AI</div><div class="sub">Voice (Remy)</div></div>
     </div>
   </div>
 
-  <div class="section"><h3>PAL Compilation Pipeline</h3>
+  <!-- DEPLOYMENT -->
+  <div class="section"><h3>Deployment Architecture</h3>
     <div class="flow">
-      <div class="flow-item">1. EXTRACT<br><span style="font-size:10px;color:var(--text-dim)">Intent + Domain</span></div><span class="flow-arrow">→</span>
-      <div class="flow-item">2. INJECT<br><span style="font-size:10px;color:var(--text-dim)">Context + State</span></div><span class="flow-arrow">→</span>
-      <div class="flow-item">3. ENHANCE<br><span style="font-size:10px;color:var(--text-dim)">Expand + Decompose</span></div><span class="flow-arrow">→</span>
-      <div class="flow-item">4. COMPILE<br><span style="font-size:10px;color:var(--text-dim)">Manifests + Tools</span></div><span class="flow-arrow">→</span>
-      <div class="flow-item">5. ROUTE<br><span style="font-size:10px;color:var(--text-dim)">Agent Allocation</span></div>
+      <div class="flow-box"><span class="icon">📦</span>GitHub</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">🏗</span>Terraform (AWS)</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">🌐</span>Vercel (Frontend)</div><span class="flow-arrow">→</span>
+      <div class="flow-box"><span class="icon">🔗</span>rostragent.com</div>
     </div>
   </div>
 </div>
-<div class="footer"><a href="index.html">← Back to Artispreneur</a> · © 2026</div>
+<div class="footer"><a href="index.html">← Artispreneur</a> · Confidential · July 2026 · github.com/diamitani/artispreneur-v217</div>
 </body>
 </html>
