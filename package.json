@@ -2,5 +2,8 @@
   "name": "artispreneur",
   "private": true,
   "version": "2.17.0",
-  "description": "Artispreneur — static frontend + one Vercel serverless function (api/chat.js) powering the homepage demo and the Rostr Agent Terminal with Gemini (free tier) or DeepSeek."
+  "description": "Artispreneur — static frontend + one Vercel serverless function (api/chat.js) powering the homepage demo and the Rostr Agent Terminal. Uses Vercel AI Gateway (default) with direct DeepSeek/Bedrock/Gemini fallbacks.",
+  "dependencies": {
+    "ai": "^7.0.31"
+  }
 }

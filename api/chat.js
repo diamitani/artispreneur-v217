@@ -1,19 +1,39 @@
 // Vercel serverless function — powers BOTH the homepage demo widget (index.html)
 // and the Rostr Agent Terminal (workspace.html) with a real LLM call.
 //
-// Three providers, all called with plain fetch() — no AWS SDK, no new npm deps:
-//   - deepseek  (default)  — very cheap, OpenAI-compatible API
-//   - bedrock               — Amazon Nova Micro, Bedrock's cheapest first-party model,
-//                             called via Bedrock's bearer-token API keys (no SigV4 signing)
-//   - gemini                — genuine free tier, used as a last-resort fallback
+// Four providers, tried cheapest/simplest-first:
+//   - gateway   (default, tried first) — Vercel AI Gateway via the 'ai' package. Model is
+//                whatever GATEWAY_MODEL is set to (default: deepseek/deepseek-chat). Browse
+//                the exact model catalog/slugs in the Vercel dashboard under AI Gateway →
+//                Models — they change over time and aren't hardcoded here beyond the default.
+//                IMPORTANT — I could only verify the failure/fallback path from this sandbox,
+//                not a real successful Gateway call: the installed SDK (ai@7.0.31) explicitly
+//                asks for AI_GATEWAY_API_KEY in its own error when unauthenticated, even with
+//                a VERCEL_OIDC_TOKEN present. If OIDC-only auth (no API key, per Vercel's own
+//                "no Gateway API key needed" docs) doesn't work once actually deployed, set
+//                AI_GATEWAY_API_KEY explicitly (Vercel dashboard → AI Gateway → API Keys) —
+//                the router falls through to direct DeepSeek/Bedrock/Gemini either way, so
+//                nothing breaks regardless, but confirm this path is truly live before relying
+//                on it as your primary route.
+//   - deepseek                — direct call, very cheap, OpenAI-compatible API. Fallback for
+//                               when Gateway isn't enabled on this Vercel project/account.
+//   - bedrock                 — Amazon Nova Micro, Bedrock's cheapest first-party model,
+//                               called via Bedrock's bearer-token API keys (no SigV4 signing)
+//   - gemini                  — genuine free tier, last-resort fallback
+// All four are called with plain fetch()/the 'ai' package — no AWS SDK dependency.
 //
 // LLM_PROVIDER controls routing:
-//   "router" (default)  — tries deepseek, then bedrock, then gemini, in that (cheapest-first)
-//                          order, using whichever ones have keys configured, until one succeeds
-//   "deepseek" | "bedrock" | "gemini" — pin to a single provider
+//   "router" (default)  — tries gateway, then deepseek, then bedrock, then gemini, using
+//                          whichever have credentials configured, until one succeeds
+//   "gateway" | "deepseek" | "bedrock" | "gemini" — pin to a single provider
 //
 // Required Vercel project environment variables (set in the dashboard — never commit them):
-//   DEEPSEEK_API_KEY        from https://platform.deepseek.com
+//   GATEWAY_MODEL             optional, defaults to "deepseek/deepseek-chat".
+//   AI_GATEWAY_API_KEY        Vercel dashboard → AI Gateway → API Keys. Set this explicitly —
+//                             see the IMPORTANT note above on why OIDC-only wasn't confirmed
+//                             to be enough. For LOCAL testing instead, `vc env pull .env.local`
+//                             gives you VERCEL_OIDC_TOKEN (see index.mjs for a test script).
+//   DEEPSEEK_API_KEY         from https://platform.deepseek.com
 //   AWS_BEARER_TOKEN_BEDROCK  a LONG-TERM Bedrock API key (IAM console → Bedrock → API keys →
 //                             "long-term"). Short-term keys expire in 12h and will break in prod.
 //   AWS_BEDROCK_REGION       e.g. "us-east-1" (must have Nova Micro model access enabled)
@@ -30,6 +50,7 @@
 // user), not real abuse protection — if this needs to be bulletproof, add Vercel KV or
 // Upstash Redis and move the counter server-side, keyed by a signed anonymous user id.
 
+const GATEWAY_MODEL = process.env.GATEWAY_MODEL || 'deepseek/deepseek-chat';
 const GEMINI_MODEL = 'gemini-2.0-flash';
 const DEEPSEEK_MODEL = 'deepseek-chat';
 const BEDROCK_MODEL = 'amazon.nova-micro-v1:0'; // Bedrock's cheapest first-party text model
@@ -66,6 +87,30 @@ Answer briefly (under 150 words) and practically. Ask for the specific missing d
 to actually do the task (song title, state, dollar amount, etc.) rather than inventing facts.
 Never claim to have registered, filed, submitted, or paid anything — only a connected human/service
 can confirm a real-world action completed. This is a demo workspace, not a real production system yet.`;
+}
+
+async function callGateway(systemPrompt, message, history) {
+  // Only attempt Gateway if we have some form of credential — VERCEL_OIDC_TOKEN is what
+  // `vc env pull` gives you locally; deployed Vercel functions get platform auth
+  // automatically but often still expose this var, and AI_GATEWAY_API_KEY covers running
+  // this endpoint somewhere other than Vercel with an explicit Gateway key.
+  if (!process.env.VERCEL_OIDC_TOKEN && !process.env.AI_GATEWAY_API_KEY && !process.env.VERCEL) {
+    throw new Error('gateway_not_configured');
+  }
+  const { generateText } = require('ai');
+  const messages = [
+    ...history.map(h => ({ role: h.role === 'assistant' ? 'assistant' : 'user', content: h.text })),
+    { role: 'user', content: message },
+  ];
+  const { text } = await generateText({
+    model: GATEWAY_MODEL,
+    system: systemPrompt,
+    messages,
+    maxOutputTokens: MAX_OUTPUT_TOKENS,
+    temperature: 0.6,
+  });
+  if (!text) throw new Error('gateway_empty_response');
+  return { text: text.trim(), provider: 'gateway', model: GATEWAY_MODEL };
 }
 
 async function callDeepSeek(systemPrompt, message, history) {
@@ -137,13 +182,15 @@ async function callGemini(systemPrompt, message, history) {
   return { text: text.trim(), provider: 'gemini', model: GEMINI_MODEL };
 }
 
-// Cheapest-first order. DeepSeek and Bedrock Nova Micro are both fractions-of-a-cent per
-// call; Gemini's paid tier is pricier per token but sits last as a free-tier-eligible safety net.
-const PROVIDER_FNS = { deepseek: callDeepSeek, bedrock: callBedrock, gemini: callGemini };
-const ROUTER_ORDER = ['deepseek', 'bedrock', 'gemini'];
+// Gateway first (zero key management on Vercel, and GATEWAY_MODEL defaults to DeepSeek
+// anyway); then direct DeepSeek and Bedrock Nova Micro, both fractions-of-a-cent per call;
+// Gemini's paid tier is pricier per token but sits last as a free-tier-eligible safety net.
+const PROVIDER_FNS = { gateway: callGateway, deepseek: callDeepSeek, bedrock: callBedrock, gemini: callGemini };
+const ROUTER_ORDER = ['gateway', 'deepseek', 'bedrock', 'gemini'];
 
 function configuredProviders() {
   return ROUTER_ORDER.filter(name => {
+    if (name === 'gateway') return !!(process.env.VERCEL_OIDC_TOKEN || process.env.AI_GATEWAY_API_KEY || process.env.VERCEL);
     if (name === 'deepseek') return !!process.env.DEEPSEEK_API_KEY;
     if (name === 'bedrock') return !!process.env.AWS_BEARER_TOKEN_BEDROCK;
     if (name === 'gemini') return !!process.env.GEMINI_API_KEY;
