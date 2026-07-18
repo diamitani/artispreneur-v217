@@ -1,18 +1,29 @@
 // Vercel serverless function — powers BOTH the homepage demo widget (index.html)
 // and the Rostr Agent Terminal (workspace.html) with a real LLM call.
 //
-// Provider: Gemini by default (genuine free tier — cheapest option), DeepSeek as a
-// paid-but-very-cheap alternative. No AWS/Bedrock account needed, no new npm deps —
-// both providers are called with plain fetch(), which Vercel's Node runtime has built in.
+// Three providers, all called with plain fetch() — no AWS SDK, no new npm deps:
+//   - deepseek  (default)  — very cheap, OpenAI-compatible API
+//   - bedrock               — Amazon Nova Micro, Bedrock's cheapest first-party model,
+//                             called via Bedrock's bearer-token API keys (no SigV4 signing)
+//   - gemini                — genuine free tier, used as a last-resort fallback
 //
-// To activate, set these as Vercel project environment variables (never commit them):
-//   LLM_PROVIDER        "gemini" (default) or "deepseek"
-//   GEMINI_API_KEY       from https://aistudio.google.com/apikey — free tier
-//   DEEPSEEK_API_KEY     from https://platform.deepseek.com — only needed if LLM_PROVIDER=deepseek
+// LLM_PROVIDER controls routing:
+//   "router" (default)  — tries deepseek, then bedrock, then gemini, in that (cheapest-first)
+//                          order, using whichever ones have keys configured, until one succeeds
+//   "deepseek" | "bedrock" | "gemini" — pin to a single provider
 //
-// If no key is configured, or the call fails for any reason, this endpoint returns a
-// non-200 and the frontend falls back to its static canned replies — the chat never
-// breaks, it just degrades from "dynamic" to "static demo".
+// Required Vercel project environment variables (set in the dashboard — never commit them):
+//   DEEPSEEK_API_KEY        from https://platform.deepseek.com
+//   AWS_BEARER_TOKEN_BEDROCK  a LONG-TERM Bedrock API key (IAM console → Bedrock → API keys →
+//                             "long-term"). Short-term keys expire in 12h and will break in prod.
+//   AWS_BEDROCK_REGION       e.g. "us-east-1" (must have Nova Micro model access enabled)
+//   GEMINI_API_KEY           from https://aistudio.google.com/apikey
+// You only need to set the ones for providers you actually want in the router — missing ones
+// are skipped, not treated as errors.
+//
+// If nothing is configured, or every configured provider fails, this endpoint returns a
+// non-200 and the frontend falls back to its static canned replies — the chat never breaks,
+// it just degrades from "dynamic" to "static demo".
 //
 // Daily usage limiting: enforced client-side (localStorage) in index.html/workspace.html
 // since this project has no database/KV store yet. That's a soft cap (clearable by the
@@ -21,6 +32,7 @@
 
 const GEMINI_MODEL = 'gemini-2.0-flash';
 const DEEPSEEK_MODEL = 'deepseek-chat';
+const BEDROCK_MODEL = 'amazon.nova-micro-v1:0'; // Bedrock's cheapest first-party text model
 const MAX_MESSAGE_LEN = 500;
 const MAX_HISTORY_TURNS = 6;
 const MAX_OUTPUT_TOKENS = 300;
@@ -56,7 +68,54 @@ Never claim to have registered, filed, submitted, or paid anything — only a co
 can confirm a real-world action completed. This is a demo workspace, not a real production system yet.`;
 }
 
-async function callGemini(apiKey, systemPrompt, message, history) {
+async function callDeepSeek(systemPrompt, message, history) {
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) throw new Error('deepseek_not_configured');
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...history.map(h => ({ role: h.role === 'assistant' ? 'assistant' : 'user', content: h.text })),
+    { role: 'user', content: message },
+  ];
+  const r = await fetch('https://api.deepseek.com/chat/completions', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({ model: DEEPSEEK_MODEL, messages, max_tokens: MAX_OUTPUT_TOKENS, temperature: 0.6 }),
+  });
+  if (!r.ok) throw new Error(`deepseek_http_${r.status}`);
+  const data = await r.json();
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error('deepseek_empty_response');
+  return { text: text.trim(), provider: 'deepseek', model: DEEPSEEK_MODEL };
+}
+
+async function callBedrock(systemPrompt, message, history) {
+  const token = process.env.AWS_BEARER_TOKEN_BEDROCK;
+  const region = process.env.AWS_BEDROCK_REGION || 'us-east-1';
+  if (!token) throw new Error('bedrock_not_configured');
+  const messages = [
+    ...history.map(h => ({ role: h.role === 'assistant' ? 'assistant' : 'user', content: [{ text: h.text }] })),
+    { role: 'user', content: [{ text: message }] },
+  ];
+  const url = `https://bedrock-runtime.${region}.amazonaws.com/model/${encodeURIComponent(BEDROCK_MODEL)}/converse`;
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      messages,
+      system: [{ text: systemPrompt }],
+      inferenceConfig: { maxTokens: MAX_OUTPUT_TOKENS, temperature: 0.6 },
+    }),
+  });
+  if (!r.ok) throw new Error(`bedrock_http_${r.status}`);
+  const data = await r.json();
+  const text = data?.output?.message?.content?.[0]?.text;
+  if (!text) throw new Error('bedrock_empty_response');
+  return { text: text.trim(), provider: 'bedrock', model: BEDROCK_MODEL };
+}
+
+async function callGemini(systemPrompt, message, history) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error('gemini_not_configured');
   const contents = [
     ...history.map(h => ({ role: h.role === 'assistant' ? 'model' : 'user', parts: [{ text: h.text }] })),
     { role: 'user', parts: [{ text: message }] },
@@ -75,25 +134,36 @@ async function callGemini(apiKey, systemPrompt, message, history) {
   const data = await r.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('gemini_empty_response');
-  return text.trim();
+  return { text: text.trim(), provider: 'gemini', model: GEMINI_MODEL };
 }
 
-async function callDeepSeek(apiKey, systemPrompt, message, history) {
-  const messages = [
-    { role: 'system', content: systemPrompt },
-    ...history.map(h => ({ role: h.role === 'assistant' ? 'assistant' : 'user', content: h.text })),
-    { role: 'user', content: message },
-  ];
-  const r = await fetch('https://api.deepseek.com/chat/completions', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ model: DEEPSEEK_MODEL, messages, max_tokens: MAX_OUTPUT_TOKENS, temperature: 0.6 }),
+// Cheapest-first order. DeepSeek and Bedrock Nova Micro are both fractions-of-a-cent per
+// call; Gemini's paid tier is pricier per token but sits last as a free-tier-eligible safety net.
+const PROVIDER_FNS = { deepseek: callDeepSeek, bedrock: callBedrock, gemini: callGemini };
+const ROUTER_ORDER = ['deepseek', 'bedrock', 'gemini'];
+
+function configuredProviders() {
+  return ROUTER_ORDER.filter(name => {
+    if (name === 'deepseek') return !!process.env.DEEPSEEK_API_KEY;
+    if (name === 'bedrock') return !!process.env.AWS_BEARER_TOKEN_BEDROCK;
+    if (name === 'gemini') return !!process.env.GEMINI_API_KEY;
+    return false;
   });
-  if (!r.ok) throw new Error(`deepseek_http_${r.status}`);
-  const data = await r.json();
-  const text = data?.choices?.[0]?.message?.content;
-  if (!text) throw new Error('deepseek_empty_response');
-  return text.trim();
+}
+
+async function routeChat(systemPrompt, message, history) {
+  const available = configuredProviders();
+  if (!available.length) throw new Error('no_provider_configured');
+  let lastErr;
+  for (const name of available) {
+    try {
+      return await PROVIDER_FNS[name](systemPrompt, message, history);
+    } catch (err) {
+      lastErr = err;
+      console.error('provider_failed', name, err?.message || err);
+    }
+  }
+  throw lastErr || new Error('all_providers_failed');
 }
 
 module.exports = async (req, res) => {
@@ -102,10 +172,12 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const provider = (process.env.LLM_PROVIDER || 'gemini').toLowerCase();
-  const geminiKey = process.env.GEMINI_API_KEY;
-  const deepseekKey = process.env.DEEPSEEK_API_KEY;
-  if ((provider === 'gemini' && !geminiKey) || (provider === 'deepseek' && !deepseekKey)) {
+  const provider = (process.env.LLM_PROVIDER || 'router').toLowerCase();
+  if (provider !== 'router' && !PROVIDER_FNS[provider]) {
+    res.status(503).json({ error: 'unknown_provider' });
+    return;
+  }
+  if (provider === 'router' && configuredProviders().length === 0) {
     res.status(503).json({ error: 'llm_not_configured' });
     return;
   }
@@ -128,10 +200,10 @@ module.exports = async (req, res) => {
   const systemPrompt = surface === 'workspace' ? workspacePrompt(body?.agent) : HOMEPAGE_PROMPT;
 
   try {
-    const reply = provider === 'deepseek'
-      ? await callDeepSeek(deepseekKey, systemPrompt, message, history)
-      : await callGemini(geminiKey, systemPrompt, message, history);
-    res.status(200).json({ reply, provider, model: provider === 'deepseek' ? DEEPSEEK_MODEL : GEMINI_MODEL });
+    const result = provider === 'router'
+      ? await routeChat(systemPrompt, message, history)
+      : await PROVIDER_FNS[provider](systemPrompt, message, history);
+    res.status(200).json({ reply: result.text, provider: result.provider, model: result.model });
   } catch (err) {
     console.error('chat_error', err?.message || err);
     res.status(502).json({ error: 'llm_call_failed' });
